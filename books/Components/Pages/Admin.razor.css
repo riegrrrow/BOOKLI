@@ -1,0 +1,204 @@
+/* Основная страница */
+.admin-page {
+    min-height: 100vh;
+    padding: 35px 5% 60px;
+    background: #493A34;
+    color: #F3F0EB;
+    box-sizing: border-box;
+}
+
+/* Заголовок */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.admin-label {
+    color: #D5CEC5;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.admin-header h1 {
+    margin: 10px 0;
+    color: #F3F0EB;
+    font-size: 32px;
+}
+
+.admin-header p {
+    margin: 0;
+    color: #D5CEC5;
+}
+
+/* Кнопки */
+.admin-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 18px;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.admin-home:hover {
+    background: #493A34;
+    border-color: #D5CEC5;
+    color: #FFFFFF;
+}
+
+/* Статистика */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-bottom: 40px;
+}
+
+.admin-stat {
+    padding: 25px;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .15);
+}
+
+.admin-stat span {
+    display: block;
+    margin-bottom: 12px;
+    color: #76675F;
+    font-size: 14px;
+}
+
+.admin-stat strong {
+    color: #30231F;
+    font-size: 27px;
+}
+
+/* Секция заказов */
+.admin-orders h2 {
+    margin-bottom: 22px;
+    color: #F3F0EB;
+    font-size: 25px;
+}
+
+.admin-empty {
+    color: #D5CEC5;
+}
+
+/* Карточка заказа */
+.admin-order {
+    margin-bottom: 20px;
+    padding: 24px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .15);
+}
+
+.admin-order-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #D5CEC5;
+}
+
+.admin-order-top strong {
+    color: #30231F;
+    font-size: 17px;
+}
+
+.admin-order-top p {
+    margin: 6px 0 0;
+    color: #76675F;
+    font-size: 13px;
+}
+
+.admin-order > p {
+    margin: 10px 0;
+    color: #59463D;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.admin-order > p strong {
+    color: #30231F;
+}
+
+.admin-order-books {
+    margin: 18px 0;
+    padding: 12px 16px;
+    background: #E7E1DA;
+    border-radius: 8px;
+}
+
+.admin-order-books p {
+    margin: 7px 0;
+    color: #59463D;
+    font-size: 14px;
+}
+
+/* Статус заказа */
+.admin-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    color: #30231F;
+}
+
+.admin-status select {
+    padding: 9px 13px;
+    background: #FFFFFF;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+}
+
+.admin-status select:focus {
+    border-color: #80675A;
+}
+
+/* Адаптация */
+@media (max-width: 750px) {
+    .admin-header {
+        flex-wrap: wrap;
+    }
+
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-page {
+        padding: 25px 16px 40px;
+    }
+
+    .admin-header h1 {
+        font-size: 25px;
+    }
+
+    .admin-order-top {
+        align-items: flex-start;
+    }
+
+    .admin-status {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

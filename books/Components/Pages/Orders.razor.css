@@ -1,0 +1,228 @@
+
+/* ==============================
+   СТРАНИЦА МОИХ ЗАКАЗОВ
+============================== */
+
+.orders-page {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 30px 5% 60px;
+    background: #493A34;
+    color: #F3F0EB;
+}
+
+/* ЗАГОЛОВОК */
+
+.orders-page h1 {
+    color: #F3F0EB;
+    font-size: 32px;
+    margin: 25px 0 8px;
+}
+
+.orders-subtitle {
+    color: #D5CEC5;
+    font-size: 16px;
+    margin-bottom: 35px;
+}
+
+/* КНОПКА ВОЗВРАТА */
+
+.orders-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 9px 16px;
+    color: #30231F;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.orders-back:hover {
+    background: #80675A;
+    border-color: #80675A;
+    color: #FFFFFF;
+    transform: translateX(-3px);
+}
+
+/* СПИСОК ЗАКАЗОВ */
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* КАРТОЧКА ЗАКАЗА */
+
+.order-card {
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* ШАПКА КАРТОЧКИ */
+
+.order-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.order-card-header h2 {
+    color: #30231F;
+    font-size: 21px;
+    margin: 0 0 8px;
+}
+
+.order-card-header p {
+    color: #76675F;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* СТАТУС ЗАКАЗА */
+
+.order-status {
+    display: inline-block;
+    padding: 7px 13px;
+    background: #E5DED7;
+    color: #493A34;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* РАЗДЕЛИТЕЛЬ */
+
+.order-card hr {
+    border: none;
+    border-top: 1px solid #D5CEC5;
+    margin: 20px 0;
+}
+
+/* ИНФОРМАЦИЯ О ЗАКАЗЕ */
+
+.order-card-info p {
+    color: #76675F;
+    font-size: 15px;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.order-card-info strong {
+    color: #30231F;
+}
+
+.order-card-info .order-total {
+    color: #30231F;
+    font-size: 19px;
+    font-weight: 700;
+    margin-top: 18px;
+}
+
+/* КНОПКА ПОДРОБНОСТЕЙ */
+
+.order-details-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 18px;
+    padding: 11px 18px;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.order-details-button:hover {
+    background: #493A34;
+    border-color: #493A34;
+    color: #FFFFFF;
+}
+
+/* ПУСТАЯ ИСТОРИЯ ЗАКАЗОВ */
+
+.orders-empty {
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    padding: 55px 25px;
+    text-align: center;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+}
+
+.orders-empty h2 {
+    color: #30231F;
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+.orders-empty p {
+    color: #76675F;
+    font-size: 15px;
+}
+
+.orders-empty a {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 12px 20px;
+    background: #80675A;
+    color: #FFFFFF;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background .2s ease;
+}
+
+.orders-empty a:hover {
+    background: #493A34;
+    color: #FFFFFF;
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ */
+
+@media (max-width: 600px) {
+    .orders-page {
+        padding: 25px 16px 40px;
+    }
+
+    .orders-page h1 {
+        font-size: 27px;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+
+    .order-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .order-details-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

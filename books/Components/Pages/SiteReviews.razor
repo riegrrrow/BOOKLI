@@ -1,0 +1,202 @@
+@page "/site-reviews"
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject SiteReviewService SiteReviewService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Отзывы о BOOKLI</PageTitle>
+
+<div class="site-reviews-page">
+    <a href="/" class="reviews-back">
+        ← Вернуться на главную
+    </a>
+
+    <h1>Отзывы о BOOKLI</h1>
+
+    <div class="site-rating">
+        <h2>Общий рейтинг сайта</h2>
+
+        <p>
+            @averageRating.ToString("0.0") / 5
+        </p>
+
+        <p>
+            @GetStars(averageRating)
+        </p>
+
+        <p>
+            Количество отзывов: @reviews.Count
+        </p>
+    </div>
+
+    @if (isAuthenticated)
+    {
+        <div class="site-review-form">
+
+            <h3>Оставить отзыв о BOOKLI</h3>
+
+            <label>Ваша оценка:</label>
+
+            <select @bind="selectedRating">
+                <option value="5">★★★★★ — Отлично</option>
+                <option value="4">★★★★ — Хорошо</option>
+                <option value="3">★★★ — Нормально</option>
+                <option value="2">★★ — Плохо</option>
+                <option value="1">★ — Очень плохо</option>
+            </select>
+
+            <label>Ваш отзыв:</label>
+
+            <textarea @bind="reviewComment"
+                      placeholder="Поделитесь впечатлениями о сайте...">
+            </textarea>
+
+            <button @onclick="SubmitReviewAsync">
+                Отправить отзыв
+            </button>
+
+            @if (!string.IsNullOrWhiteSpace(reviewMessage))
+            {
+                <p>@reviewMessage</p>
+            }
+
+        </div>
+    }
+    else
+    {
+        <p>Чтобы оставить отзыв, войдите в свой аккаунт.</p>
+    }
+
+    <div class="site-reviews-list">
+
+        <h2>Отзывы посетителей</h2>
+
+        @if (reviews.Count == 0)
+        {
+            <p>Пока отзывов нет. Станьте первым!</p>
+        }
+        else
+        {
+            @foreach (var review in reviews)
+            {
+                <div class="site-review-card">
+
+                    <h3>@review.UserName</h3>
+
+                    <p>@GetStars(review.Rating)</p>
+
+                    <p>@review.Comment</p>
+
+                    <small>
+                        @review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                    </small>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>
+
+@code {
+    private List<SiteReview> reviews = new();
+
+    private decimal averageRating = 0;
+
+    private bool isAuthenticated;
+
+    private string? currentUserId;
+
+    private string currentUserName = "Читатель";
+
+    private int selectedRating = 5;
+
+    private string reviewComment = "";
+
+    private string reviewMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        isAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
+
+        currentUserId = state.User.FindFirst(
+            ClaimTypes.NameIdentifier)?.Value;
+
+        currentUserName = state.User.Identity?.Name ?? "Читатель";
+
+        await LoadReviewsAsync();
+    }
+
+    private async Task LoadReviewsAsync()
+    {
+        reviews = await SiteReviewService.GetReviewsAsync();
+
+        averageRating = await SiteReviewService.GetAverageRatingAsync();
+
+        var myReview = reviews.FirstOrDefault(
+            r => r.UserId == currentUserId);
+
+        if (myReview != null)
+        {
+            selectedRating = myReview.Rating;
+            reviewComment = "";
+        }
+    }
+    private string GetStars(decimal rating)
+    {
+        int roundedRating = (int)Math.Round(rating);
+
+        return new string('★', roundedRating) +
+               new string('☆', 5 - roundedRating);
+    }
+
+    private async Task SubmitReviewAsync()
+    {
+        if (string.IsNullOrWhiteSpace(currentUserId))
+        {
+            reviewMessage = "Войдите в аккаунт.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(reviewComment))
+        {
+            reviewMessage = "Напишите текст отзыва.";
+            return;
+        }
+
+        if (selectedRating < 1 || selectedRating > 5)
+        {
+            reviewMessage = "Выберите оценку от 1 до 5.";
+            return;
+        }
+
+        try
+        {
+            await SiteReviewService.AddReviewAsync(
+                currentUserId,
+                currentUserName,
+                selectedRating,
+                reviewComment
+            );
+
+            reviewMessage = "Ваш отзыв успешно обновлён!";
+
+            await LoadReviewsAsync();
+        }
+        catch (ArgumentException ex)
+        {
+            reviewMessage = ex.Message;
+        }
+        catch (Exception)
+        {
+            reviewMessage = "Не удалось сохранить отзыв.";
+        }
+    }
+}

@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData"
+                            DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <h3>Для просмотра этой страницы необходимо войти.</h3>
+                <a href="/login">Перейти ко входу</a>
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1"/>
+    </Found>
+</Router>

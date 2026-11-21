@@ -1,0 +1,123 @@
+
+@page "/orders"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject OrderService OrderService
+
+<PageTitle>Мои заказы — BOOKLI</PageTitle>
+
+<div class="orders-page">
+
+    <a href="/account" class="orders-back">
+        ← Личный кабинет
+    </a>
+
+    <h1>Мои заказы</h1>
+
+    <p class="orders-subtitle">
+        История Ваших покупок в BOOKLI
+    </p>
+
+    @if (loading)
+    {
+        <p>Загрузка заказов...</p>
+    }
+    else if (orders.Count == 0)
+    {
+        <div class="orders-empty">
+            <h2>Пока нет заказов</h2>
+            <p>Здесь будут отображаться Ваши покупки.</p>
+            <a href="/">Перейти в каталог</a>
+        </div>
+    }
+    else
+    {
+        <div class="orders-list">
+
+            @foreach (var order in orders)
+            {
+                <div class="order-card">
+
+                    <div class="order-card-header">
+                        <div>
+                            <h2>Заказ №@order.Id</h2>
+
+                            <p>
+                                @order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </p>
+                        </div>
+
+                        <span class="order-status">
+                            @order.Status
+                        </span>
+                    </div>
+
+                    <hr />
+
+                    <div class="order-card-info">
+
+                        <p>
+                            <strong>Книг в заказе:</strong>
+                            @order.Items.Sum(x => x.Quantity)
+                        </p>
+
+                        <p>
+                            <strong>Способ оплаты:</strong>
+                            @order.PaymentMethod
+                        </p>
+
+                        <p>
+                            <strong>Статус оплаты:</strong>
+                            @order.PaymentStatus
+                        </p>
+
+                        <p class="order-total">
+                            Итого: @order.Total.ToString("N2") ₽
+                        </p>
+
+                    </div>
+
+                    <a href="@($"/order/{order.Id}")"
+                       class="order-details-button">
+                        Подробнее о заказе →
+                    </a>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+@code {
+    private List<Order> orders = new();
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var state =
+                await AuthStateProvider.GetAuthenticationStateAsync();
+
+            var user = await UserManager.GetUserAsync(state.User);
+
+            if (user != null)
+            {
+                orders = await OrderService.GetOrdersAsync(user.Id);
+            }
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

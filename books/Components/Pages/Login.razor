@@ -1,0 +1,81 @@
+
+@page "/login"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Вход — BOOKLI</PageTitle>
+
+<div class="login-container">
+    <div class="login-wrapper">
+
+        <a href="/" class="login-back">
+            ← На главную
+        </a>
+
+        <div class="login-card">
+
+            <div class="login-heading">
+                <span class="login-label">BOOKLI</span>
+                <h1>Вход в BOOKLI</h1>
+                <p>Рады видеть Вас снова!</p>
+            </div>
+
+            @if (Error == "1")
+            {
+                <p class="error-message">
+                    Неверная электронная почта или пароль.
+                </p>
+            }
+
+            <form method="post" action="/auth/login">
+                <AntiforgeryToken />
+
+                <label for="login-email">Электронная почта</label>
+                <input id="login-email"
+                       type="email"
+                       name="email"
+                       placeholder="example@mail.com"
+                       autocomplete="email"
+                       required />
+
+                <label for="login-password">Пароль</label>
+                <input id="login-password"
+                       type="password"
+                       name="password"
+                       placeholder="Введите пароль"
+                       autocomplete="current-password"
+                       required />
+
+                <input type="hidden"
+                       name="returnUrl"
+                       value="/account" />
+
+                <button type="submit">Войти</button>
+            </form>
+
+            <div class="register-link">
+                <span>Нет аккаунта?</span>
+                <a href="/register">Зарегистрироваться</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState =
+            await AuthStateProvider.GetAuthenticationStateAsync();
+
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/", replace: true);
+        }
+    }
+}

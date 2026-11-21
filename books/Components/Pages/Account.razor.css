@@ -1,0 +1,546 @@
+
+/* ==============================
+   ЛИЧНЫЙ КАБИНЕТ BOOKLI
+============================== */
+
+.account-page {
+    max-width: 1050px;
+    margin: 12px auto 70px;
+    padding: 30px;
+    color: #F3F0EB;
+    background: transparent;
+    border: none;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.back-to-catalog {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 9px 16px;
+    color: #806342;
+    background: #FBF8F2;
+    border: 1px solid #D8C5A3;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.back-to-catalog:hover {
+    background: #806342;
+    border-color: #806342;
+    color: #FFFFFF;
+    transform: translateX(-3px);
+}
+
+/* ЗАГОЛОВОК ЛИЧНОГО КАБИНЕТА */
+.account-heading {
+    margin-bottom: 32px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #D8C5A3;
+    position: relative;
+}
+
+.account-heading::after {
+    content: "";
+    display: block;
+    width: 75px;
+    height: 3px;
+    margin-top: 17px;
+    background: #987747;
+    border-radius: 3px;
+}
+
+.account-title {
+    margin: 0 0 10px;
+    color: #F3F0EB;
+    font-size: 37px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.account-subtitle {
+    margin: 0;
+    color: #D5CEC5;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: .2px;
+}
+
+.account-subtitle {
+    margin: 0;
+    color: #D5CEC5;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.admin-badge {
+    display: inline-block;
+    margin-bottom: 22px;
+    padding: 10px 18px;
+    border: 1px solid #C5A875;
+    border-radius: 20px;
+    background: #EDE3D0;
+    color: #806342;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+/* ПРОФИЛЬ */
+
+.profile-card {
+    padding: 32px;
+    margin-bottom: 28px;
+    background: #FFFCF8;
+    border: 1px solid #DCC8B5;
+    border-radius: 18px;
+    box-shadow: 0 7px 22px rgba(56, 40, 32, .10);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #382820;
+    color: #F7F1E8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    border: 4px solid #F1E4D5;
+}
+
+.profile-user-info {
+    flex: 1;
+    position: relative;
+    padding-left: 22px;
+    border-left: 2px solid #D8C5A3;
+}
+
+.profile-greeting {
+    color: #987747;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.profile-user-info h2 {
+    margin: 9px 0;
+    color: #382820;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.profile-user-info p {
+    margin: 0 0 18px;
+    color: #806B5E;
+    font-size: 14px;
+    letter-spacing: .2px;
+}
+
+.profile-settings-button {
+    display: inline-block;
+    padding: 11px 19px;
+    background: #806342;
+    color: #FFFFFF;
+    border: 1px solid #806342;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.profile-settings-button:hover {
+    background: #382820;
+    border-color: #382820;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+/* ЗАГРУЗКА АВАТАРА */
+
+/* БЛОК ЗАГРУЗКИ АВАТАРА */
+.avatar-upload {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #D8C5A3;
+}
+
+.avatar-upload label {
+    display: block;
+    margin-bottom: 14px;
+    color: #382820;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+.avatar-upload input {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 12px;
+    color: #806B5E;
+    font-size: 13px;
+}
+
+.avatar-upload small {
+    display: block;
+    color: #987F64;
+    font-size: 12px;
+    letter-spacing: .2px;
+}
+
+.avatar-upload label {
+    display: block;
+    margin-bottom: 12px;
+    color: #382820;
+    font-weight: 600;
+}
+
+.avatar-upload input {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 10px;
+    color: #655449;
+}
+/* КНОПКА ЗАГРУЗКИ АВАТАРА */
+.avatar-upload ::deep input[type="file"] {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 10px;
+    color: #655449;
+}
+
+/* КНОПКА ЗАГРУЗКИ АВАТАРА */
+.avatar-upload ::deep input[type="file"]::file-selector-button {
+    padding: 11px 20px;
+    margin-right: 12px;
+    border: 1px solid #806342;
+    border-radius: 9px;
+    background: #806342;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.avatar-upload ::deep input[type="file"]::file-selector-button:hover {
+    background: #382820;
+    border-color: #382820;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+.delete-avatar-button {
+    margin-top: 13px;
+    padding: 9px 16px;
+    border: 1px solid #C7AFA0;
+    border-radius: 8px;
+    background: #FBF8F2;
+    color: #875D4A;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.delete-avatar-button:hover {
+    background: #875D4A;
+    border-color: #875D4A;
+    color: #FFFFFF;
+}
+
+.account-message {
+    margin: 18px 0 0;
+    padding: 12px 16px;
+    border: 1px solid #D8C5A3;
+    border-radius: 9px;
+    background: #F1E9D9;
+    color: #66502F;
+    font-size: 14px;
+}
+
+/* КАРТОЧКИ РАЗДЕЛОВ */
+
+.account-sections {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+/* ПРЕМИАЛЬНЫЕ КАРТОЧКИ */
+.account-section-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 29px;
+    background-color: #FBF8F2 !important;
+    border: 1.5px solid #705448;
+    border-radius: 17px;
+    box-shadow: 0 5px 18px rgba(56, 40, 32, .12);
+    transition: all .3s ease;
+}
+
+.account-section-card:hover {
+    transform: translateY(-3px);
+    border-color: #382820;
+    box-shadow: 0 9px 25px rgba(56, 40, 32, .18);
+}
+
+.section-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 17px;
+    border-radius: 14px;
+    background: #EDE3D0;
+    border: 1px solid #D8C5A3;
+    color: #987747;
+    font-size: 26px;
+}
+
+.account-section-card h3 {
+    margin: 0 0 10px;
+    color: #382820;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+.account-section-card > p {
+    margin: 0 0 17px;
+    background: #FBF8F2;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.empty-section {
+    color: #A08D78 !important;
+    font-style: italic;
+    font-size: 13px !important;
+}
+
+.section-preview {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin: 5px 0 17px;
+}
+
+.section-preview > a {
+    color: #806342;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color .2s ease;
+}
+
+.section-preview > a:hover {
+    color: #382820;
+    text-decoration: underline;
+}
+
+.order-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 13px 15px;
+    border: 1px solid #E2D5BF;
+    border-radius: 9px;
+    background: #F4EEE3;
+    color: #806F5D;
+    font-size: 13px;
+}
+
+.order-preview strong {
+    color: #382820;
+}
+
+.address-preview,
+.review-preview {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 7px 0 18px;
+    padding: 14px 16px;
+    border-left: 3px solid #B99A69;
+    border-radius: 0 9px 9px 0;
+    background: #F1EADC;
+    color: #655443;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ПРЕМИАЛЬНЫЕ ССЫЛКИ */
+.section-link {
+    display: inline-block;
+    margin-top: auto;
+    padding-top: 12px;
+    color: #987747;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    transition: color .25s ease;
+}
+
+.section-link:hover {
+    color: #382820;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* ВЫХОД */
+
+.account-logout {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 28px;
+}
+
+/* КНОПКА ВЫХОДА */
+.logout-button {
+    padding: 12px 24px;
+    border: 1px solid #D5CEC5;
+    border-radius: 9px;
+    background: transparent;
+    color: #F3F0EB;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.logout-button:hover {
+    background: #80675A;
+    border-color: #80675A;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+/* АДАПТАЦИЯ */
+
+@media (max-width: 650px) {
+    .account-page {
+        margin: 25px auto 45px;
+        padding: 16px;
+    }
+
+    .account-title {
+        font-size: 29px;
+    }
+
+    /* ПРЕМИАЛЬНАЯ КАРТОЧКА ПРОФИЛЯ */
+    .profile-card {
+        padding: 35px;
+        margin-bottom: 30px;
+        background: #FBF8F2;
+        border: 1px solid #D8C5A3;
+        border-radius: 19px;
+        box-shadow: 0 6px 22px rgba(70, 52, 34, .08);
+    }
+    
+    .profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        min-width: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #382820;
+        color: #F7F1E8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 700;
+        border: 4px solid #E8D8B9;
+        box-shadow: 0 0 0 3px #FBF8F2, 0 0 0 4px #C5A875;
+    }
+    
+    .account-sections {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .account-section-card {
+        padding: 22px;
+    }
+
+    .account-logout {
+        justify-content: stretch;
+    }
+
+    .logout-button {
+        width: 100%;
+    }
+}
+body {
+    background: #493A34;
+}
+
+.account-background {
+    width: 100vw;
+    min-height: 100vh;
+    margin-left: calc(50% - 50vw);
+    background: #493A34;
+    padding: 1px 0 70px;
+    box-sizing: border-box;
+}
+/* ТЕКСТ В КАРТОЧКАХ ЛИЧНОГО КАБИНЕТА */
+
+.account-section-card,
+.account-section-card p,
+.account-section-card span {
+    color: #30231F;
+}
+
+.account-section-card h3 {
+    color: #493A34;
+}
+
+.account-section-card a {
+    color: #80675A;
+}
+
+.account-section-card a:hover {
+    color: #30231F;
+}
+/* РАЗМЕР ТЕКСТА В КАРТОЧКАХ */
+.account-section-card > p {
+    font-size: 15px;
+}
+
+.account-section-card h3 {
+    font-size: 21px;
+}
+
+.account-section-card .empty-section {
+    font-size: 14px !important;
+}

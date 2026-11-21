@@ -1,0 +1,124 @@
+@page "/order/{Id:int}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject OrderService OrderService
+@inject NavigationManager Navigation
+
+<PageTitle>Заказ №@Id — BOOKLI</PageTitle>
+
+<div class="order-details-page">
+
+    <a href="/orders">← Назад к заказам</a>
+
+    @if (loading)
+    {
+        <p>Загрузка заказа...</p>
+    }
+    else if (order == null)
+    {
+        <h2>Заказ не найден</h2>
+        <p>Возможно, заказ не существует или у Вас нет к нему доступа.</p>
+        <a href="/orders">Вернуться к заказам</a>
+    }
+    else
+    {
+        <h1>Заказ №@order.Id</h1>
+
+        <p>
+            Дата оформления:
+            @order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+        </p>
+
+        <div class="order-details-status">
+            <strong>Статус заказа:</strong>
+            @order.Status
+        </div>
+
+        <hr />
+
+        <h2>Состав заказа</h2>
+
+        @foreach (var item in order.Items)
+        {
+            <div class="order-product">
+                @if (!string.IsNullOrWhiteSpace(item.Image))
+                {
+                    <img src="@item.Image" alt="@item.BookTitle" />
+                }
+
+                <div>
+                    <h3>@item.BookTitle</h3>
+                    <p>@item.Author</p>
+                    <p>Цена: @item.UnitPrice.ToString("N2") ₽</p>
+                    <p>Количество: @item.Quantity</p>
+                    <strong>
+                        Сумма: @((item.UnitPrice * item.Quantity).ToString("N2")) ₽
+                    </strong>
+                </div>
+            </div>
+
+            <hr />
+        }
+
+        <h2>Доставка и оплата</h2>
+
+        <p>
+            <strong>Адрес доставки:</strong>
+            @order.DeliveryAddress
+        </p>
+
+        <p>
+            <strong>Способ оплаты:</strong>
+            @order.PaymentMethod
+        </p>
+
+        <p>
+            <strong>Статус оплаты:</strong>
+            @order.PaymentStatus
+        </p>
+
+        <hr />
+
+        <h2 class="order-details-total">
+            Итого: @order.Total.ToString("N2") ₽
+        </h2>
+
+        <a href="/orders">Вернуться к истории заказов</a>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Order? order;
+    private bool loading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        loading = true;
+
+        try
+        {
+            var state = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = await UserManager.GetUserAsync(state.User);
+
+            if (user != null)
+            {
+                order = await OrderService.GetOrderByIdAsync(Id, user.Id);
+            }
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

@@ -1,0 +1,181 @@
+
+/* ==============================
+   ПОДРОБНОСТИ ЗАКАЗА
+============================== */
+
+.order-details-page {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 30px 5% 60px;
+    background: #493A34;
+    color: #F3F0EB;
+}
+
+/* ЗАГОЛОВКИ */
+
+.order-details-page h1 {
+    color: #F3F0EB;
+    font-size: 32px;
+    margin: 25px 0 15px;
+}
+
+.order-details-page h2 {
+    color: #F3F0EB;
+    font-size: 23px;
+    margin: 25px 0 18px;
+}
+
+.order-details-page > p {
+    color: #D5CEC5;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* КНОПКИ ВОЗВРАТА */
+
+.order-details-page > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 17px;
+    margin: 8px 12px 20px 0;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+.order-details-page > a:hover {
+    background: #493A34;
+    border-color: #D5CEC5;
+    color: #FFFFFF;
+}
+
+/* СТАТУС ЗАКАЗА */
+
+.order-details-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 17px;
+    margin: 12px 0 20px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.order-details-status strong {
+    color: #30231F;
+}
+
+/* РАЗДЕЛИТЕЛИ */
+
+.order-details-page hr {
+    border: none;
+    border-top: 1px solid #80675A;
+    margin: 25px 0;
+}
+
+/* КАРТОЧКИ КНИГ */
+
+.order-product {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 22px;
+    margin: 18px 0;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.order-product:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.order-product img {
+    width: 100px;
+    height: 140px;
+    object-fit: contain;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.order-product h3 {
+    color: #30231F;
+    font-size: 19px;
+    margin: 0 0 10px;
+}
+
+.order-product p {
+    color: #76675F;
+    font-size: 14px;
+    margin: 7px 0;
+    line-height: 1.5;
+}
+
+.order-product strong {
+    display: inline-block;
+    color: #30231F;
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+/* ДОСТАВКА И ОПЛАТА */
+
+.order-details-page > p strong {
+    color: #F3F0EB;
+}
+
+/* ИТОГОВАЯ СУММА */
+
+.order-details-total {
+    color: #F3F0EB !important;
+    font-size: 26px !important;
+    margin: 25px 0 !important;
+}
+
+/* АДАПТАЦИЯ */
+
+@media (max-width: 600px) {
+    .order-details-page {
+        padding: 25px 16px 40px;
+    }
+
+    .order-details-page h1 {
+        font-size: 27px;
+    }
+
+    .order-details-page h2 {
+        font-size: 21px;
+    }
+
+    .order-product {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .order-product img {
+        width: 80px;
+        height: 115px;
+    }
+
+    .order-product h3 {
+        font-size: 16px;
+    }
+
+    .order-details-page > a {
+        margin-right: 5px;
+    }
+}

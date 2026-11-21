@@ -1,0 +1,55 @@
+nav-menu {
+    display: block;
+}
+
+.bookli-header {
+    width: 100%;
+    min-height: 76px;
+    background: #241b2f;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 45px;
+    box-sizing: border-box;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+
+.bookli-logo {
+    color: #f5ebd9;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-decoration: none;
+}
+
+.bookli-nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.bookli-nav a {
+    color: #f5ebd9;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.bookli-nav a:hover,
+.bookli-nav a.active {
+    color: #d9ad78;
+}
+
+@media (max-width: 650px) {
+    .bookli-header {
+        flex-direction: column;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .bookli-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+}

@@ -1,0 +1,461 @@
+
+/* =====================================
+   СТРАНИЦА ПОДРОБНОГО ОПИСАНИЯ КНИГИ
+   BOOKLI — DARK IVORY & MOCHA
+===================================== */
+
+.details-page {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 30px 5% 60px;
+    background: #493A34;
+    color: #F3F0EB;
+}
+
+/* Кнопка возврата */
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 9px 16px;
+    color: #30231F;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.back-button:hover {
+    background: #80675A;
+    border-color: #80675A;
+    color: #FFFFFF;
+    transform: translateX(-3px);
+}
+
+/* Основной блок книги */
+
+.details-container {
+    display: grid;
+    grid-template-columns: 350px minmax(0, 1fr);
+    align-items: start;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Обложка */
+
+.details-cover {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 25px;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
+}
+
+.details-cover img {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    max-height: 440px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+/* Информация о книге */
+
+.details-info {
+    min-width: 0;
+    padding: 30px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
+}
+
+.details-genre {
+    display: inline-block;
+    padding: 7px 14px;
+    margin-bottom: 15px;
+    background: #E5DED7;
+    color: #59463D;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.details-info h1 {
+    margin: 0 0 10px;
+    color: #30231F;
+    font-size: 32px;
+    line-height: 1.3;
+}
+
+.details-info h3 {
+    margin: 0 0 20px;
+    color: #76675F;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    margin: 22px 0;
+    background: #D5CEC5;
+}
+
+/* Характеристики книги */
+
+.book-specifications {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.specification {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 15px;
+    background: #EAE4DD;
+    border: 1px solid #D5CEC5;
+    border-radius: 10px;
+}
+
+.specification span {
+    color: #76675F;
+    font-size: 13px;
+}
+
+.specification strong {
+    color: #30231F;
+    font-size: 16px;
+}
+
+/* Описание */
+
+.details-info h2 {
+    margin: 25px 0 14px;
+    color: #493A34;
+    font-size: 23px;
+}
+
+.details-info > p {
+    color: #594D46;
+    font-size: 17px;
+    line-height: 1.85;
+}
+
+/* Цена */
+
+.details-price {
+    margin: 25px 0 18px;
+    color: #30231F;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+/* Кнопки */
+
+.buy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.buy-button:hover {
+    background: #493A34;
+    border-color: #493A34;
+    color: #FFFFFF;
+}
+
+/* Сообщение о добавлении */
+
+.success-message {
+    margin: 14px 0;
+    color: #496B50;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* =====================================
+   ОТЗЫВЫ ЧИТАТЕЛЕЙ
+===================================== */
+
+.reviews-section {
+    margin-top: 35px;
+    padding-top: 5px;
+}
+
+.reviews-section h2 {
+    margin-bottom: 18px;
+    color: #493A34;
+    font-size: 25px;
+}
+
+.average-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 17px;
+    margin-bottom: 22px;
+    background: #EAE4DD;
+    border: 1px solid #D5CEC5;
+    border-radius: 10px;
+    color: #594D46;
+    font-size: 15px;
+}
+
+.average-rating strong {
+    color: #30231F;
+    font-size: 17px;
+}
+
+/* Форма отзыва */
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px;
+    margin-bottom: 25px;
+    background: #EAE4DD;
+    border: 1px solid #D5CEC5;
+    border-radius: 12px;
+}
+
+.review-form h3 {
+    margin: 0 0 8px;
+    color: #493A34;
+    font-size: 20px;
+}
+
+.review-form label {
+    color: #30231F;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s ease;
+}
+
+.review-form select:focus,
+.review-form textarea:focus {
+    border-color: #80675A;
+}
+
+.review-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.review-form button {
+    align-self: flex-start;
+}
+
+.review-form > p {
+    margin: 0;
+    color: #594D46;
+    font-size: 14px;
+}
+
+/* Список отзывов */
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.reviews-list > p {
+    color: #76675F;
+    font-size: 14px;
+}
+
+.review-card {
+    padding: 20px;
+    background: #EAE4DD;
+    border: 1px solid #D5CEC5;
+    border-radius: 12px;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .10);
+}
+
+.review-card h4 {
+    margin: 0 0 10px;
+    color: #30231F;
+    font-size: 16px;
+}
+
+.review-card p {
+    margin: 8px 0;
+    color: #594D46;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.review-card small {
+    display: block;
+    margin-top: 12px;
+    color: #76675F;
+    font-size: 12px;
+}
+
+/* Книга не найдена */
+
+.not-found {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: #493A34;
+    color: #F3F0EB;
+    text-align: center;
+}
+
+.not-found h1 {
+    color: #F3F0EB;
+    font-size: 30px;
+}
+
+.not-found a {
+    padding: 11px 20px;
+    background: #80675A;
+    color: #FFFFFF;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background .2s ease;
+}
+
+.not-found a:hover {
+    background: #30231F;
+}
+
+/* Адаптация для телефона */
+
+@media (max-width: 800px) {
+    .details-container {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .details-cover img {
+        max-height: 350px;
+    }
+
+    .details-info {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 500px) {
+    .details-page {
+        padding: 22px 15px 40px;
+    }
+
+    .details-info {
+        padding: 18px;
+    }
+
+    .details-info h1 {
+        font-size: 25px;
+    }
+
+    .details-info h2 {
+        font-size: 21px;
+    }
+
+    .book-specifications {
+        grid-template-columns: 1fr;
+    }
+
+    .details-price {
+        font-size: 26px;
+    }
+
+    .buy-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .review-form {
+        padding: 16px;
+    }
+
+    .review-card {
+        padding: 16px;
+    }
+}
+.rating-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0 12px;
+}
+
+.rating-star {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #B9ADA4;
+    font-size: 34px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.rating-star.active {
+    color: #80675A;
+}
+
+.rating-star:hover {
+    color: #493A34;
+    transform: scale(1.15);
+}
+
+.rating-value {
+    margin-left: 8px;
+    color: #30231F;
+    font-size: 15px;
+    font-weight: 600;
+}

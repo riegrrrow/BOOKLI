@@ -1,0 +1,129 @@
+@page "/cart"
+@inject NavigationManager Navigation
+@inject books.Services.CartService CartService
+@implements System.IDisposable
+<PageTitle>Корзина — BOOKLI</PageTitle>
+
+<div class="cart-page">
+
+    <a href="/" class="cart-back">
+        ← Вернуться в магазин
+    </a>
+    
+    <h1>Моя корзина </h1>
+
+    @if (CartService.Items.Count == 0)
+    {
+        <div class="empty-cart">
+            <h2>Ваша корзина пока пуста</h2>
+            <p>Добавьте понравившиеся книги в каталогe</p>
+            <a href="/" class="shop-button">
+                Перейти в магазин
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-container">
+
+            <div class="cart-products">
+
+                @foreach (var item in CartService.Items)
+                {
+                    <div class="cart-item" @key="item.Title">
+
+                        <img src="@item.Image"
+                             alt="@item.Title" />
+
+                        <div class="cart-item-info">
+                            <h3>@item.Title</h3>
+                            <p>@item.Author</p>
+
+                            <strong>
+                                @item.Price.ToString("N0") ₽
+                            </strong>
+
+                            <div class="quantity-controls">
+
+                                <button @onclick="() => CartService.Decrease(item)">
+                                    −
+                                </button>
+
+                                <span>@item.Quantity</span>
+
+                                <button @onclick="() => CartService.Increase(item)">
+                                    +
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="cart-item-right">
+
+                            <strong>
+                                @((item.Price * item.Quantity).ToString("N0")) ₽
+                            </strong>
+
+                            <button class="remove-button"
+                                    @onclick="() => CartService.Remove(item)">
+                                Удалить
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="cart-summary">
+
+                <h2>Ваш заказ</h2>
+
+                <p>
+                    Количество книг:
+                    <strong>@CartService.TotalCount</strong>
+                </p>
+
+                <div class="total-price">
+                    <span>Итого:</span>
+                    <strong>@CartService.TotalPrice.ToString("N0") ₽</strong>
+                </div>
+
+                @if (CartService.Items.Count > 0)
+                {
+                    <button class="checkout-button"
+                            @onclick='() => Navigation.NavigateTo("/checkout")'>
+                        Перейти к оформлению
+                    </button>
+                }
+
+                <button class="clear-button"
+                        @onclick="CartService.Clear">
+                    Очистить корзину
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        CartService.OnChange += UpdateCart;
+    }
+
+    private void UpdateCart()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CartService.OnChange -= UpdateCart;
+    }
+}
+}

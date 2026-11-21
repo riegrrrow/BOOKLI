@@ -1,0 +1,188 @@
+@page "/checkout"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject CartService Cart
+@inject OrderService OrderService
+@inject NavigationManager Navigation
+
+<PageTitle>Оформление заказа — BOOKLI</PageTitle>
+
+<div class="checkout-page">
+    <a href="/cart" class="checkout-back">← Вернуться в корзину</a>
+
+    <h1>Оформление заказа</h1>
+
+    @if (loading)
+    {
+        <p>Загрузка...</p>
+    }
+    else if (user == null)
+    {
+        <p>Не удалось определить пользователя. Войдите в аккаунт.</p>
+        <a href="/login">Перейти ко входу</a>
+    }
+    else if (Cart.Items.Count == 0)
+    {
+        <p>Корзина пуста. Добавьте книги перед оформлением заказа.</p>
+        <a href="/">Перейти в каталог</a>
+    }
+    else
+    {
+        <div class="checkout-content">
+            <section class="checkout-card">
+                <h2>Ваши книги</h2>
+
+                @foreach (var item in Cart.Items)
+                {
+                    <div class="checkout-item">
+                        <div>
+                            <strong>@item.Title</strong>
+                            <p>@item.Author</p>
+                            <span>Количество: @item.Quantity</span>
+                        </div>
+                        <strong>@((item.Price * item.Quantity).ToString("N2")) ₽</strong>
+                    </div>
+                }
+
+                <div class="checkout-total">
+                    <span>Итого:</span>
+                    <strong>@Cart.TotalPrice.ToString("N2") ₽</strong>
+                </div>
+            </section>
+
+            <section class="checkout-card">
+                <h2>Доставка</h2>
+
+                <h2>Способ оплаты</h2>
+
+                <div class="payment-options">
+                    <label>
+                        <input type="radio"
+                               name="paymentMethod"
+                               checked="@(paymentMethod == "При получении")"
+                               @onchange="@(() => paymentMethod = "При получении")" />
+                        Оплата при получении
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="paymentMethod"
+                               checked="@(paymentMethod == "Онлайн")"
+                               @onchange="@(() => paymentMethod = "Онлайн")" />
+                        Банковской картой онлайн
+                    </label>
+                </div>
+
+                @if (paymentMethod == "Онлайн")
+                {
+                    <p class="payment-note">
+                        После оформления заказ получит статус «Ожидает оплаты».
+                        Реальная оплата картой пока не подключена.
+                    </p>
+                }
+
+
+                <label for="deliveryAddress">Адрес доставки</label>
+                <textarea id="deliveryAddress"
+                          @bind="deliveryAddress"
+                          rows="4"
+                          placeholder="Город, улица, дом, квартира..."></textarea>
+
+                @if (!string.IsNullOrWhiteSpace(message))
+                {
+                    <p class="checkout-message">@message</p>
+                }
+
+                <button class="checkout-submit"
+                        type="button"
+                        disabled="@submitting"
+                        @onclick="PlaceOrderAsync">
+                    @(submitting ? "Оформляем..." : "Подтвердить заказ")
+                </button>
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    private ApplicationUser? user;
+    private string deliveryAddress = "";
+    private string paymentMethod = "При получении";
+    private string message = "";
+    private bool loading = true;
+    private bool submitting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        user = await UserManager.GetUserAsync(state.User);
+
+        if (user != null)
+        {
+            deliveryAddress = user.DeliveryAddress ?? "";
+        }
+
+        loading = false;
+    }
+
+    private async Task PlaceOrderAsync()
+    {
+        if (user == null || submitting)
+            return;
+
+        if (Cart.Items.Count == 0)
+        {
+            message = "Корзина пуста.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(deliveryAddress))
+        {
+            message = "Укажите адрес доставки.";
+            return;
+        }
+
+        submitting = true;
+        message = "";
+
+        try
+        {
+            var items = Cart.Items.Select(item => new OrderItem
+            {
+                BookTitle = item.Title,
+                Author = item.Author,
+                UnitPrice = item.Price,
+                Quantity = item.Quantity,
+                Image = item.Image
+            }).ToList();
+
+            await OrderService.CreateOrderAsync(
+                user.Id,
+                deliveryAddress.Trim(),
+                items,
+                paymentMethod);
+
+            user.DeliveryAddress = deliveryAddress.Trim();
+            await UserManager.UpdateAsync(user);
+
+            Cart.Clear();
+
+            Navigation.NavigateTo("/account");
+        }
+        catch (Exception)
+        {
+            message = "Не удалось оформить заказ. Попробуйте ещё раз.";
+        }
+        finally
+        {
+            submitting = false;
+        }
+    }
+}

@@ -1,0 +1,318 @@
+
+@page "/settings"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using books.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+<PageTitle>Настройки — BOOKLI</PageTitle>
+
+<div class="settings-page">
+
+    <a href="/account" class="settings-back">
+        <span>←</span> Вернуться в личный кабинет
+    </a>
+
+    <h1>Настройки</h1>
+    <p class="settings-subtitle">
+        Управляй своим аккаунтом BOOKLI
+    </p>
+
+    @if (loading)
+    {
+        <p>Загрузка настроек...</p>
+    }
+    else if (user != null)
+    {
+        <div class="settings-card">
+
+            <div class="settings-tabs">
+                <button type="button"
+                        class="@(activeTab == "profile" ? "active" : "")"
+                        @onclick='() => activeTab = "profile"'>
+                    ♙ Профиль
+                </button>
+
+                <button type="button"
+                        class="@(activeTab == "security" ? "active" : "")"
+                        @onclick='() => activeTab = "security"'>
+                    ◈ Безопасность
+                </button>
+
+                <button type="button"
+                        class="@(activeTab == "notifications" ? "active" : "")"
+                        @onclick='() => activeTab = "notifications"'>
+                    ✧ Уведомления
+                </button>
+            </div>
+
+            @if (activeTab == "profile")
+            {
+                <div class="settings-section">
+                    <h2>Личные данные</h2>
+                    <p>Информация Вашего аккаунта</p>
+
+                    <div class="settings-fields-grid">
+
+                        <div class="settings-field">
+                            <label>Имя</label>
+                            <input @bind="fullName"
+                                   placeholder="Твоё имя" />
+                        </div>
+
+                        <div class="settings-field">
+                            <label>Электронная почта</label>
+                            <input type="email"
+                                   @bind="email"
+                                   placeholder="Введите электронную почту" />
+                        </div>
+
+                        <div class="settings-field full-width">
+                            <label>Адрес доставки</label>
+                            <textarea @bind="deliveryAddress"
+                      rows="3"
+                      placeholder="Город, улица, дом, квартира..."></textarea>
+                        </div>
+
+                    </div>
+
+                    <button type="button"
+                            class="settings-save"
+                            @onclick="SaveProfileAsync">
+                        Сохранить профиль
+                    </button>
+                </div>
+            }
+            else if (activeTab == "security")
+            {
+                <div class="settings-section">
+                    <h2>Безопасность</h2>
+                    <p>Изменение пароля аккаунта</p>
+
+                    <div class="settings-fields-grid">
+
+                        <div class="settings-field">
+                            <label>Текущий пароль</label>
+                            <input type="password"
+                                   @bind="currentPassword"
+                                   autocomplete="current-password"
+                                   placeholder="Текущий пароль" />
+                        </div>
+
+                        <div class="settings-field">
+                            <label>Новый пароль</label>
+                            <input type="password"
+                                   @bind="newPassword"
+                                   autocomplete="new-password"
+                                   placeholder="Новый пароль" />
+                        </div>
+
+                        <div class="settings-field full-width">
+                            <label>Повтор нового пароля</label>
+                            <input type="password"
+                                   @bind="confirmPassword"
+                                   autocomplete="new-password"
+                                   placeholder="Повтори новый пароль" />
+                        </div>
+
+                    </div>
+
+                    <button type="button"
+                            class="settings-save"
+                            @onclick="ChangePasswordAsync">
+                        Изменить пароль
+                    </button>
+                </div>
+            }
+            else if (activeTab == "notifications")
+            {
+                <div class="settings-section">
+                    <h2>Уведомления</h2>
+                    <p>Выберите, какие письма хотите получать</p>
+
+                    <div class="notification-option">
+                        <div>
+                            <strong>Обновления заказов</strong>
+                            <p>Информация о статусе Ваших заказов</p>
+                        </div>
+
+                        <input type="checkbox"
+                               @bind="emailOrderUpdates" />
+                    </div>
+                    
+
+                    <div class="notification-option">
+                        <div>
+                            <strong>Новости и акции</strong>
+                            <p>Скидки, специальные предложения и новости BOOKLI</p>
+                        </div>
+
+                        <input type="checkbox"
+                               @bind="emailPromotions" />
+                    </div>
+                    
+                    
+
+                    <button type="button"
+                            class="settings-save"
+                            @onclick="SaveNotificationsAsync">
+                        Сохранить настройки
+                    </button>
+
+                    <small>
+                        Пока сохраняются только предпочтения.
+                        Отправку писем подключим отдельно.
+                    </small>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <p class="settings-message">@message</p>
+            }
+
+        </div>
+    }
+</div>
+
+@code {
+    private ApplicationUser? user;
+
+    private bool loading = true;
+    private string activeTab = "profile";
+    private string message = "";
+
+    private string fullName = "";
+    private string email = "";
+    private string deliveryAddress = "";
+
+    private string currentPassword = "";
+    private string newPassword = "";
+    private string confirmPassword = "";
+
+    private bool emailOrderUpdates;
+    private bool emailPromotions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        user = await UserManager.GetUserAsync(state.User);
+
+        if (user != null)
+        {
+            fullName = user.FullName ?? "";
+            email = user.Email ?? "";
+            deliveryAddress = user.DeliveryAddress ?? "";
+
+            emailOrderUpdates = user.EmailOrderUpdates;
+            emailPromotions = user.EmailPromotions;
+        }
+
+        loading = false;
+    }
+
+    private async Task SaveProfileAsync()
+    {
+        if (user == null)
+            return;
+
+        string newEmail = email.Trim();
+
+        if (string.IsNullOrWhiteSpace(newEmail) ||
+            !new System.ComponentModel.DataAnnotations.EmailAddressAttribute()
+                .IsValid(newEmail))
+        {
+            email = user.Email ?? "";
+            message = "Введите корректный адрес электронной почты.";
+            return;
+        }
+
+        var existingUser = await UserManager.FindByEmailAsync(newEmail);
+
+        if (existingUser != null && existingUser.Id != user.Id)
+        {
+            email = user.Email ?? "";
+            message = "Этот адрес электронной почты уже используется.";
+            return;
+        }
+
+        string oldEmail = user.Email ?? "";
+        string oldUserName = user.UserName ?? "";
+
+        user.FullName = fullName.Trim();
+        user.DeliveryAddress = deliveryAddress.Trim();
+        user.Email = newEmail;
+        user.UserName = newEmail;
+
+        var result = await UserManager.UpdateAsync(user);
+
+        if (result.Succeeded)
+        {
+            message = "Личные данные успешно сохранены!";
+        }
+        else
+        {
+            user.Email = oldEmail;
+            user.UserName = oldUserName;
+            email = oldEmail;
+
+            message = "Не удалось сохранить изменения.";
+        }
+    }
+
+    private async Task SaveNotificationsAsync()
+    {
+        if (user == null)
+            return;
+
+        user.EmailOrderUpdates = emailOrderUpdates;
+        user.EmailPromotions = emailPromotions;
+
+        var result = await UserManager.UpdateAsync(user);
+
+        message = result.Succeeded
+            ? "Настройки уведомлений сохранены!"
+            : string.Join(", ", result.Errors.Select(x => x.Description));
+    }
+
+    private async Task ChangePasswordAsync()
+    {
+        if (user == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(currentPassword) ||
+            string.IsNullOrWhiteSpace(newPassword) ||
+            string.IsNullOrWhiteSpace(confirmPassword))
+        {
+            message = "Заполните все поля пароля.";
+            return;
+        }
+
+        if (newPassword != confirmPassword)
+        {
+            message = "Новые пароли не совпадают.";
+            return;
+        }
+
+        var result = await UserManager.ChangePasswordAsync(
+            user, currentPassword, newPassword);
+
+        if (result.Succeeded)
+        {
+            currentPassword = "";
+            newPassword = "";
+            confirmPassword = "";
+            message = "Пароль успешно изменён!";
+        }
+        else
+        {
+            message = string.Join(", ",
+                result.Errors.Select(x => x.Description));
+        }
+    }
+}

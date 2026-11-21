@@ -1,0 +1,461 @@
+
+.settings-back {
+    display: inline-block;
+    color: #a56845;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.settings-page h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin: 0 0 10px;
+    color: #382820;
+}
+
+.settings-subtitle {
+    color: #8b796d;
+    margin-bottom: 30px;
+}
+
+.settings-card {
+    background: #fff;
+    border: 1px solid #eadfd5;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(73, 53, 43, 0.05);
+}
+
+.settings-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #eadfd5;
+    padding-bottom: 18px;
+}
+
+.settings-tabs button {
+    padding: 11px 17px;
+    border: 1px solid #eadfd5;
+    border-radius: 10px;
+    background: #fff;
+    color: #655449;
+    cursor: pointer;
+}
+
+.settings-tabs button.active {
+    background: #a56845;
+    color: white;
+    border-color: #a56845;
+}
+
+.settings-section {
+    padding-top: 25px;
+    max-width: 600px;
+}
+
+.settings-section h2 {
+    margin-bottom: 8px;
+}
+
+.settings-section > p {
+    color: #8b796d;
+    margin-bottom: 22px;
+}
+
+.settings-section label {
+    display: block;
+    margin: 17px 0 8px;
+    font-weight: 600;
+}
+
+.settings-section input:not([type="checkbox"]),
+.settings-section textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #eadfd5;
+    border-radius: 10px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.settings-section input:disabled {
+    background: #f5f1ed;
+    color: #8b796d;
+}
+
+.settings-section textarea {
+    resize: vertical;
+}
+
+.settings-section small {
+    display: block;
+    color: #8b796d;
+    margin-top: 8px;
+}
+
+/* КНОПКА СОХРАНЕНИЯ */
+.settings-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 22px;
+    padding: 13px 25px;
+    color: #FFFFFF;
+    background: #705448;
+    border: 1px solid #705448;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.settings-save:hover {
+    background: #382820;
+    border-color: #382820;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 13px rgba(56, 40, 32, .18);
+}
+
+.notification-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 20px;
+    background-color: #FFFFFF !important;
+    border: 1px solid #D8C5A3;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(56, 40, 32, .04);
+    transition: all .25s ease;
+}
+
+.notification-option:hover {
+    background-color: #FFFEFC !important;
+    border-color: #B99A78;
+}
+.notification-option strong {
+    color: #382820;
+    font-size: 15px;
+}
+
+.notification-option p {
+    margin: 5px 0 0;
+    color: #806B5E;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.notification-option input {
+    width: 20px;
+    height: 20px;
+    accent-color: #a56845;
+    cursor: pointer;
+}
+
+.settings-message {
+    margin-top: 20px;
+    color: #52734c;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .settings-page {
+        margin: 20px auto;
+        padding: 12px;
+    }
+
+    .settings-card {
+        padding: 16px;
+    }
+
+    .settings-tabs button {
+        flex: 1;
+        padding: 10px;
+    }
+}
+/* ВКЛАДКИ НАСТРОЕК */
+.settings-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    padding: 8px;
+    background: #E9DED1;
+    border: 1px solid #CBB69E;
+    border-radius: 12px;
+}
+
+.settings-tabs button {
+    flex: 1;
+    min-width: 130px;
+    padding: 13px 18px;
+    color: #705448;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.settings-tabs button:hover {
+    background: #F7F1E8;
+    border-color: #B99A78;
+}
+
+/* АКТИВНАЯ ВКЛАДКА */
+.settings-tabs button.active {
+    color: #FFFFFF;
+    background: #705448;
+    border-color: #705448;
+    box-shadow: 0 3px 9px rgba(56, 40, 32, .15);
+}
+/* СЕКЦИИ НАСТРОЕК */
+.settings-section {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 30px 35px;
+    background: #F4EEE5;
+    border: 1px solid #D8C5A3;
+    border-radius: 13px;
+}
+
+/* ПОДПИСИ ПОЛЕЙ */
+.settings-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #5C4437;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ПОЛЯ ВВОДА */
+.settings-section input,
+.settings-section textarea {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    color: #382820;
+    background: #FFFFFF;
+    border: 1px solid #CBB69E;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    box-sizing: border-box;
+}
+
+.settings-section input:focus,
+.settings-section textarea:focus {
+    border-color: #806342;
+    box-shadow: 0 0 0 3px rgba(128, 99, 66, .13);
+}
+/* УВЕДОМЛЕНИЯ */
+.notification-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 18px 20px;
+    background: #FBF8F2;
+    border: 1px solid #D8C5A3;
+    border-radius: 11px;
+    transition: all .25s ease;
+}
+
+.notification-option:hover {
+    border-color: #987747;
+    background: #FFFFFF;
+}
+
+.notification-option label {
+    margin: 0;
+    color: #382820;
+    font-weight: 600;
+}
+
+/* ПЕРЕКЛЮЧАТЕЛИ */
+.notification-option input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+    accent-color: #806342;
+    cursor: pointer;
+}
+/* СЕТКА ПОЛЕЙ */
+.settings-section .settings-fields-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 25px;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.settings-section .settings-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.settings-section .settings-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.settings-section .settings-field input,
+.settings-section .settings-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+    .settings-section .settings-fields-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .settings-section .settings-field.full-width {
+        grid-column: auto;
+    }
+}
+
+/* ОТДЕЛЬНОЕ ПОЛЕ */
+.settings-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.settings-field.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ПОДПИСИ */
+.settings-field label {
+    margin-bottom: 9px;
+    color: #5C4437;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+@media (max-width: 600px) {
+    .settings-fields-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .settings-field.full-width {
+        grid-column: auto;
+    }
+}
+/* РАСТЯГИВАЕМ СЕКЦИЮ НА ВСЮ ШИРИНУ */
+.settings-card .settings-section {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box;
+}
+/* DARK IVORY & MOCHA — ЗАГОЛОВКИ */
+
+.settings-back {
+    color: #D5CEC5;
+}
+
+.settings-back:hover {
+    color: #FFFFFF;
+}
+
+.settings-page h1 {
+    color: #F3F0EB;
+}
+
+.settings-subtitle {
+    color: #D5CEC5;
+}
+/* ОСНОВНАЯ КАРТОЧКА */
+
+.settings-page .settings-card {
+    background-color: #30231F !important;
+    border-color: #80675A !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .18);
+}
+/* ВКЛАДКИ */
+
+.settings-tabs {
+    background: #30231F;
+    border-color: #80675A;
+}
+
+.settings-tabs button {
+    color: #D5CEC5;
+    background: transparent;
+    border-color: transparent;
+}
+
+.settings-tabs button:hover {
+    color: #FFFFFF;
+    background: #493A34;
+    border-color: #80675A;
+}
+
+.settings-tabs button.active {
+    color: #FFFFFF;
+    background: #80675A;
+    border-color: #80675A;
+}
+
+/* ФОН ВСЕЙ СТРАНИЦЫ НАСТРОЕК */
+.settings-page {
+    background: #594840;
+}
+/* НИЖНЯЯ ЧАСТЬ СТРАНИЦЫ */
+.settings-page {
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+/* КНОПКА ВОЗВРАТА В ЛИЧНЫЙ КАБИНЕТ */
+
+.settings-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 9px 16px;
+    color: #806342;
+    background: #FBF8F2;
+    border: 1px solid #D8C5A3;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.settings-back:hover {
+    background: #806342;
+    border-color: #806342;
+    color: #FFFFFF !important;
+    transform: translateX(-3px);
+}
+/* Исправление ширины страницы настроек */
+.settings-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.settings-card,
+.settings-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+.settings-page {
+    padding: 25px 5% 40px;
+}

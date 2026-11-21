@@ -1,0 +1,264 @@
+
+@page "/book/{BookId:int}"
+@using books.Models
+@using Microsoft.AspNetCore.Components
+@using books.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject books.Services.CartService CartService
+@inject books.Services.BookService BookService
+@inject ReviewService ReviewService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>@(book?.Title ?? "Книга не найдена") — BOOKLI</PageTitle>
+
+@if (loading)
+{
+    <p>Загрузка книги...</p>
+}
+else if (book is not null)
+{
+    <div class="details-page">
+        <a href="@BackUrl" class="back-button">
+            ← Вернуться назад
+        </a>
+
+        <div class="details-container">
+            <div class="details-cover">
+                <img src="@book.Image" alt="@book.Title" />
+            </div>
+
+            <div class="details-info">
+                <span class="details-genre">@book.Genre</span>
+
+                <h1>@book.Title</h1>
+                <h3>@book.Author</h3>
+
+                <div class="line"></div>
+
+                <div class="book-specifications">
+                    <div class="specification">
+                        <span>📄 Количество страниц</span>
+                        <strong>@book.PageCount</strong>
+                    </div>
+
+                    <div class="specification">
+                        <span>📅 Год издания</span>
+                        <strong>@book.PublicationYear</strong>
+                    </div>
+
+                    <div class="specification">
+                        <span>📖 Тип обложки</span>
+                        <strong>@book.CoverType</strong>
+                    </div>
+
+                    <div class="specification">
+                        <span>⭐ Рейтинг читателей</span>
+                        <strong>@book.Rating.ToString("0.0") / 5</strong>
+                    </div>
+                </div>
+
+                <div class="line"></div>
+
+                <h2>О книге</h2>
+                <p>@book.Description</p>
+
+                <div class="details-price">
+                    @book.Price.ToString("N0") ₽
+                </div>
+                <button class="buy-button" @onclick="AddToCart">
+                    Добавить в корзину
+                </button>
+
+                @if (added)
+                {
+                    <p class="success-message">
+                        ✓ Книга добавлена в корзину!
+                    </p>
+                }
+                <div class="reviews-section">
+                    <h2>Отзывы читателей</h2>
+
+                    <div class="average-rating">
+                        ⭐ Средняя оценка:
+                        <strong>@averageRating.ToString("0.0") / 5</strong>
+                    </div>
+
+                    @if (isAuthenticated)
+                    {
+                        <div class="review-form">
+                            <h3>Оставить отзыв</h3>
+
+                            <label>Ваша оценка</label>
+
+                            <div class="rating-select">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    var rating = i;
+
+                                    <button type="button"
+                                            class="rating-star @(rating <= selectedRating ? "active" : "")"
+                                            @onclick="() => selectedRating = rating"
+                                            aria-label="@($"Оценка {rating} из 5")">
+                                        @(rating <= selectedRating ? "★" : "☆")
+                                    </button>
+                                }
+
+                                <span class="rating-value">@selectedRating / 5</span>
+                            </div>
+
+                            <label>Ваш отзыв</label>
+
+                            <textarea @bind="reviewComment"
+                      placeholder="Поделитесь впечатлениями о книге..."
+                      rows="4"></textarea>
+
+                            <button class="buy-button" @onclick="SubmitReviewAsync">
+                                Отправить отзыв
+                            </button>
+
+                            @if (!string.IsNullOrEmpty(reviewMessage))
+                            {
+                                <p>@reviewMessage</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Войдите в аккаунт, чтобы оставить отзыв.</p>
+                        <a href="/login">Войти</a>
+                    }
+
+                    <div class="reviews-list">
+                        @if (reviews.Count == 0)
+                        {
+                            <p>Пока отзывов нет. Будьте первым!</p>
+                        }
+                        else
+                        {
+                            @foreach (var review in reviews)
+                            {
+                                <div class="review-card">
+                                    <h4>@review.UserName</h4>
+                                    <p>⭐ @review.Rating / 5</p>
+                                    <p>@review.Comment</p>
+                                    <small>@review.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</small>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="not-found">
+        <h1>Книга не найдена</h1>
+        <a href="@BackUrl">Вернуться назад</a>
+    </div>
+}
+
+@code {
+    private List<BookReview> reviews = new();
+
+    private int selectedRating = 5;
+
+    private string reviewComment = "";
+
+    private string reviewMessage = "";
+
+    private decimal averageRating = 0;
+
+    private bool isAuthenticated = false;
+    private string? currentUserId;
+
+    private string currentUserName = "Читатель";
+    [Parameter]
+    public int BookId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    private string BackUrl =>
+        ReturnUrl == "/account" || ReturnUrl == "/favorites"
+            ? ReturnUrl
+            : "/";
+
+    private Book? book;
+    private bool added = false;
+    private bool loading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        isAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
+
+        currentUserId = state.User.FindFirst(
+            System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        currentUserName = state.User.Identity?.Name ?? "Читатель";
+        loading = true;
+
+        book = await BookService.GetBookAsync(BookId);
+
+        added = false;
+
+        reviews = await ReviewService.GetReviewsAsync(BookId);
+
+        averageRating = await ReviewService.GetAverageRatingAsync(BookId);
+
+        loading = false;
+    }
+
+    private void AddToCart()
+    {
+        if (book != null)
+        {
+            CartService.Add(
+                book.Title,
+                book.Author,
+                book.Price,
+                book.Image
+            );
+
+            added = true;
+        }
+    }
+    private async Task SubmitReviewAsync()
+    {
+        if (!isAuthenticated || string.IsNullOrEmpty(currentUserId))
+        {
+            reviewMessage = "Войдите в аккаунт, чтобы оставить отзыв.";
+            return;
+        }
+
+        if (selectedRating < 1 || selectedRating > 5)
+        {
+            reviewMessage = "Выберите оценку от 1 до 5.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(reviewComment))
+        {
+            reviewMessage = "Напишите текст отзыва.";
+            return;
+        }
+
+        await ReviewService.AddReviewAsync(
+            BookId,
+            currentUserId,
+            currentUserName,
+            selectedRating,
+            reviewComment
+        );
+
+        reviewComment = "";
+        selectedRating = 5;
+        reviewMessage = "Ваш отзыв сохранён!";
+
+        reviews = await ReviewService.GetReviewsAsync(BookId);
+        averageRating = await ReviewService.GetAverageRatingAsync(BookId);
+    }
+}

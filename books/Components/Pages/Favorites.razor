@@ -1,0 +1,100 @@
+
+@page "/favorites"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject FavoriteService FavoriteService
+
+<PageTitle>Избранное — BOOKLI</PageTitle>
+
+<div class="favorites-page">
+    <a href="/account" class="favorites-back">
+        ← Назад в личный кабинет
+    </a>
+    
+    <h1>
+        <span class="favorites-heading-icon">♡</span>
+        Избранное
+    </h1>
+    
+    <p>Книги, которые Вы сохранили.</p>
+
+    @if (loading)
+    {
+        <p>Загрузка...</p>
+    }
+    else if (favoriteBooks.Count == 0)
+    {
+        <div class="empty-favorites">
+            <h3>Пока здесь пусто</h3>
+            <p>Добавляйте понравившиеся книги в избранное!</p>
+            <a href="/">Перейти в каталог</a>
+        </div>
+    }
+    else
+    {
+        <div class="favorites-list">
+            @foreach (var book in favoriteBooks)
+            {
+                <div class="favorite-card">
+                    @if (!string.IsNullOrEmpty(book.Image))
+                    {
+                        <img src="@book.Image" alt="@book.Title" />
+                    }
+
+                    <div class="favorite-info">
+                        <h3>@book.Title</h3>
+                        <p class="favorite-author">@book.Author</p>
+                        <p>@book.Price ₽</p>
+
+                        <a href="@($"/book/{book.Id}?returnUrl=/favorites")">
+                            Подробнее →
+                        </a>
+
+                        <button @onclick="() => RemoveFavoriteAsync(book)">
+                            Удалить из избранного
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Book> favoriteBooks = new();
+    private bool loading = true;
+    private string? currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(state.User);
+
+        if (user != null)
+        {
+            currentUserId = user.Id;
+            favoriteBooks = await FavoriteService.GetFavoritesAsync(user.Id);
+        }
+
+        loading = false;
+    }
+
+    private async Task RemoveFavoriteAsync(Book book)
+    {
+        if (currentUserId == null)
+            return;
+
+        await FavoriteService.ToggleFavoriteAsync(
+            currentUserId,
+            book.Id.ToString());
+
+        favoriteBooks.Remove(book);
+    }
+}

@@ -1,0 +1,102 @@
+
+@using System.Threading.Tasks
+@page "/register"
+@using books.Models
+@using books.Services
+@inject RegisterService RegisterService
+@inject NavigationManager Navigation
+
+<PageTitle>Регистрация — BOOKLI</PageTitle>
+
+<div class="register-container">
+    <div class="register-wrapper">
+
+        <a href="/" class="register-back">
+            ← На главную
+        </a>
+
+        <div class="register-card">
+
+            <div class="register-heading">
+                <span class="register-label">BOOKLI</span>
+                <h1>Создать аккаунт</h1>
+                <p>Добро пожаловать в BOOKLI!</p>
+            </div>
+
+            <EditForm Model="@model" OnValidSubmit="CreateAccount">
+                <DataAnnotationsValidator />
+
+                <label>Ваше имя</label>
+                <InputText @bind-Value="model.FullName"
+                           placeholder="Введите имя" />
+                <ValidationMessage For="@(() => model.FullName)" />
+
+                <label>Электронная почта</label>
+                <InputText @bind-Value="model.Email"
+                           placeholder="example@mail.com" />
+                <ValidationMessage For="@(() => model.Email)" />
+
+                <label>Пароль</label>
+                <InputText type="password"
+                           @bind-Value="model.Password"
+                           placeholder="Минимум 6 символов" />
+                <ValidationMessage For="@(() => model.Password)" />
+
+                <label>Повторите пароль</label>
+                <InputText type="password"
+                           @bind-Value="model.ConfirmPassword"
+                           placeholder="Повторите пароль" />
+                <ValidationMessage For="@(() => model.ConfirmPassword)" />
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <p class="error-message">@errorMessage</p>
+                }
+
+                <button type="submit" disabled="@isLoading">
+                    @(isLoading ? "Регистрация..." : "Зарегистрироваться")
+                </button>
+            </EditForm>
+
+            <div class="login-link">
+                <span>Уже есть аккаунт?</span>
+                <a href="/login">Войти</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterModel model = new();
+    private string errorMessage = "";
+    private bool isLoading;
+
+    private async Task CreateAccount()
+    {
+        isLoading = true;
+        errorMessage = "";
+
+        try
+        {
+            var result = await RegisterService.RegisterAsync(model);
+
+            if (result.Success)
+            {
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage = result.Error;
+            }
+        }
+        catch (Exception)
+        {
+            errorMessage = "Не удалось выполнить регистрацию. Попробуйте ещё раз.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

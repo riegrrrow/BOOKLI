@@ -1,0 +1,263 @@
+
+/* ==============================
+   ОТЗЫВЫ О BOOKLI
+============================== */
+
+.site-reviews-page {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 35px 5% 65px;
+    background: #493A34;
+    color: #F3F0EB;
+}
+
+/* ГЛАВНЫЙ ЗАГОЛОВОК */
+
+.site-reviews-page > h1 {
+    color: #F3F0EB;
+    font-size: 32px;
+    text-align: center;
+    margin: 10px 0 35px;
+}
+
+/* ОБЩИЙ РЕЙТИНГ */
+
+.site-rating {
+    max-width: 650px;
+    margin: 0 auto 35px;
+    padding: 28px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+}
+
+.site-rating h2 {
+    color: #30231F;
+    font-size: 22px;
+    margin: 0 0 15px;
+}
+
+.site-rating p {
+    color: #76675F;
+    margin: 9px 0;
+    font-size: 15px;
+}
+
+.site-rating p:nth-of-type(1) {
+    color: #30231F;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.site-rating p:nth-of-type(2) {
+    color: #80675A;
+    font-size: 27px;
+    letter-spacing: 4px;
+}
+
+/* ФОРМА ОТЗЫВА */
+
+.site-review-form {
+    max-width: 750px;
+    margin: 0 auto 45px;
+    padding: 28px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 16px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+}
+
+.site-review-form h3 {
+    color: #30231F;
+    font-size: 22px;
+    margin: 0 0 22px;
+}
+
+.site-review-form label {
+    display: block;
+    color: #30231F;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 17px 0 9px;
+}
+
+.site-review-form select,
+.site-review-form textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background: #FFFFFF;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.site-review-form select:focus,
+.site-review-form textarea:focus {
+    border-color: #80675A;
+    box-shadow: 0 0 0 3px rgba(128, 103, 90, 0.13);
+}
+
+.site-review-form textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.site-review-form button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.site-review-form button:hover {
+    background: #493A34;
+    border-color: #493A34;
+    color: #FFFFFF;
+}
+
+.site-review-form > p {
+    color: #76675F;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+/* СООБЩЕНИЕ ДЛЯ НЕАВТОРИЗОВАННЫХ */
+
+.site-reviews-page > p {
+    color: #D5CEC5;
+    text-align: center;
+    margin: 25px 0 35px;
+}
+
+/* СПИСОК ОТЗЫВОВ */
+
+.site-reviews-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.site-reviews-list > h2 {
+    color: #F3F0EB;
+    font-size: 25px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.site-reviews-list > p {
+    color: #D5CEC5;
+    text-align: center;
+}
+
+/* КАРТОЧКА ОТЗЫВА */
+
+.site-review-card {
+    background: #F3F0EB;
+    color: #30231F;
+    padding: 24px;
+    margin-bottom: 18px;
+    border: 1px solid #D5CEC5;
+    border-radius: 14px;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.13);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.site-review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.18);
+}
+
+.site-review-card h3 {
+    color: #30231F;
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+
+.site-review-card p {
+    color: #76675F;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 10px 0;
+}
+
+.site-review-card p:nth-of-type(1) {
+    color: #80675A;
+    font-size: 21px;
+    letter-spacing: 3px;
+}
+
+.site-review-card small {
+    display: block;
+    color: #988A80;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ */
+
+@media (max-width: 600px) {
+    .site-reviews-page {
+        padding: 25px 16px 45px;
+    }
+
+    .site-reviews-page > h1 {
+        font-size: 27px;
+    }
+
+    .site-rating,
+    .site-review-form {
+        padding: 20px;
+    }
+
+    .site-rating h2,
+    .site-review-form h3 {
+        font-size: 20px;
+    }
+
+    .site-review-card {
+        padding: 18px;
+    }
+
+    .site-review-form button {
+        width: 100%;
+    }
+}
+.reviews-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 9px 16px;
+    color: #30231F;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.reviews-back:hover {
+    background: #80675A;
+    border-color: #80675A;
+    color: #FFFFFF;
+    transform: translateX(-3px);
+}

@@ -1,0 +1,191 @@
+
+/* Основной фон страницы */
+
+.login-container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: #493A34;
+    box-sizing: border-box;
+}
+
+/* Карточка входа */
+
+.login-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 42px;
+    background: #F3F0EB;
+    border: 1px solid #D5CEC5;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .2);
+    box-sizing: border-box;
+}
+
+/* Заголовок */
+
+.login-heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-label {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #80675A;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.login-card h1 {
+    margin: 0 0 10px;
+    color: #30231F;
+    font-size: 29px;
+    font-weight: 700;
+}
+
+.login-heading p {
+    margin: 0;
+    color: #76675F;
+    font-size: 15px;
+}
+
+/* Поля ввода */
+
+.login-card label {
+    display: block;
+    margin: 18px 0 8px;
+    color: #493A34;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.login-card input:not([type="hidden"]) {
+    display: block;
+    width: 100%;
+    height: 48px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all .2s ease;
+}
+
+.login-card input::placeholder {
+    color: #A99B90;
+}
+
+.login-card input:focus {
+    border-color: #80675A;
+    box-shadow: 0 0 0 3px rgba(128, 103, 90, .15);
+}
+
+/* Кнопка входа */
+
+.login-card button {
+    width: 100%;
+    height: 49px;
+    margin-top: 28px;
+    background: #80675A;
+    color: #FFFFFF;
+    border: 1px solid #80675A;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.login-card button:hover {
+    background: #493A34;
+    border-color: #493A34;
+    color: #FFFFFF;
+}
+
+/* Ссылка на регистрацию */
+
+.register-link {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 26px;
+    color: #76675F;
+    font-size: 14px;
+}
+
+.register-link a {
+    color: #80675A;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.register-link a:hover {
+    color: #493A34;
+    text-decoration: underline;
+}
+
+/* Сообщение об ошибке */
+
+.error-message {
+    padding: 12px 14px;
+    margin: 0 0 18px;
+    background: #F5E5E2;
+    color: #913F37;
+    border: 1px solid #D9B5AF;
+    border-radius: 9px;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Адаптация для телефона */
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 25px 16px;
+    }
+
+    .login-card {
+        padding: 30px 22px;
+    }
+
+    .login-card h1 {
+        font-size: 25px;
+    }
+}
+.login-wrapper {
+    width: 100%;
+    max-width: 440px;
+}
+
+.login-back {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 10px 16px;
+    background: #F3F0EB;
+    color: #30231F;
+    border: 1px solid #D5CEC5;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease;
+}
+
+.login-back:hover {
+    background: #80675A;
+    border-color: #80675A;
+    color: #FFFFFF;
+    transform: translateX(-3px);
+}

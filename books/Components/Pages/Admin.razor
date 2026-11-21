@@ -1,0 +1,143 @@
+
+@page "/admin"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+
+@using books.Models
+@using books.Services
+@using System.Linq
+
+@inject OrderService OrderService
+
+<PageTitle>Админ-панель — BOOKLI</PageTitle>
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <div>
+            <span class="admin-label">BOOKLI MANAGEMENT</span>
+            <h1>Панель администратора</h1>
+            <p>Управление книжным магазином</p>
+        </div>
+
+        <a href="/" class="admin-home">← На главную</a>
+        <a href="/admin/books" class="admin-home">
+             Управление книгами
+        </a>
+    </div>
+
+    <div class="admin-stats">
+
+        <div class="admin-stat">
+            <span>Всего заказов</span>
+            <strong>@orders.Count</strong>
+        </div>
+
+        <div class="admin-stat">
+            <span>Новых заказов</span>
+            <strong>@orders.Count(x => x.Status == "Новый")</strong>
+        </div>
+
+        <div class="admin-stat">
+            <span>Общая сумма заказов</span>
+            <strong>@orders.Sum(x => x.Total).ToString("N0") ₽</strong>
+        </div>
+
+    </div>
+
+    <section class="admin-orders">
+
+        <h2>Заказы покупателей</h2>
+
+        @if (loading)
+        {
+            <p>Загрузка заказов...</p>
+        }
+        else if (orders.Count == 0)
+        {
+            <p class="admin-empty">Пока заказов нет.</p>
+        }
+        else
+        {
+            @foreach (var order in orders)
+            {
+                <div class="admin-order">
+
+                    <div class="admin-order-top">
+                        <div>
+                            <strong>Заказ №@order.Id</strong>
+                            <p>@order.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+
+                        <strong>@order.Total.ToString("N0") ₽</strong>
+                    </div>
+
+                    <p>
+                        <strong>Покупатель:</strong> @order.UserId
+                    </p>
+
+                    <p>
+                        <strong>Адрес:</strong> @order.DeliveryAddress
+                    </p>
+
+                    <div class="admin-order-books">
+                        @foreach (var item in order.Items)
+                        {
+                            <p>
+                                @item.BookTitle — @item.Quantity шт.
+                            </p>
+                        }
+                    </div>
+
+                    <div class="admin-status">
+                        <strong>Статус:</strong>
+
+                        <select value="@order.Status"
+                                @onchange="(e) => ChangeStatusAsync(order.Id, e.Value?.ToString())">
+
+                            <option value="Новый">Новый</option>
+                            <option value="В обработке">В обработке</option>
+                            <option value="Отправлен">Отправлен</option>
+                            <option value="Доставлен">Доставлен</option>
+                            <option value="Отменён">Отменён</option>
+
+                        </select>
+                    </div>
+
+                </div>
+            }
+        }
+
+    </section>
+
+</div>
+
+@code {
+    private List<Order> orders = new();
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            orders = await OrderService.GetOrdersAsyncForAdmin();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка загрузки заказов: {ex.Message}");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task ChangeStatusAsync(int orderId, string? newStatus)
+    {
+        if (string.IsNullOrWhiteSpace(newStatus))
+            return;
+
+        await OrderService.UpdateOrderStatusAsync(orderId, newStatus);
+
+        orders = await OrderService.GetOrdersAsyncForAdmin();
+    }
+}

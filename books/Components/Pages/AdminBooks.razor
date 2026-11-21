@@ -1,0 +1,435 @@
+
+@page "/admin/books"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+
+@using books.Models
+@using books.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+
+@inject BookService BookService
+@inject IWebHostEnvironment Environment
+
+<PageTitle>Управление книгами — BOOKLI</PageTitle>
+
+<div class="admin-books-page">
+
+    <a href="/admin" class="back-to-catalog">
+        ← Вернуться в панель администратора
+    </a>
+    
+    <h1>Управление каталогом</h1>
+    <p class="page-description">
+        Добавляйте, редактируйте и удаляйте книги в магазине BOOKLI.
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="admin-message">
+            @message
+        </div>
+    }
+
+    <div class="admin-book-form">
+
+        <h2>@(isEditing ? "Редактирование книги" : "Добавить новую книгу")</h2>
+
+        <EditForm Model="editBook" OnValidSubmit="SaveBookAsync">
+
+            <div class="form-group">
+                <label>Название книги</label>
+                <InputText @bind-Value="editBook.Title"
+                           placeholder="Например, Мастер и Маргарита" />
+            </div>
+
+            <div class="form-group">
+                <label>Автор</label>
+                <InputText @bind-Value="editBook.Author"
+                           placeholder="Имя автора" />
+            </div>
+
+            <div class="form-group">
+                <label>Жанр</label>
+
+                <input list="genre-options"
+                       @bind="editBook.Genre"
+                       placeholder="Выбери или введи свой жанр" />
+
+                <datalist id="genre-options">
+                    @foreach (var genre in GenreOptions)
+                    {
+                        <option value="@genre"></option>
+                    }
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label>Цена (₽)</label>
+                <InputNumber @bind-Value="editBook.Price" />
+            </div>
+            <div class="form-group">
+                <label>Количество страниц</label>
+                <InputNumber @bind-Value="editBook.PageCount"
+                             min="1"
+                             placeholder="Например, 320" />
+            </div>
+
+            <div class="form-group">
+                <label>Год издания</label>
+                <InputNumber @bind-Value="editBook.PublicationYear"
+                             min="1"
+                             placeholder="Например, 2020" />
+            </div>
+
+            <div class="form-group">
+                <label>Тип обложки</label>
+                <InputSelect @bind-Value="editBook.CoverType">
+                    <option value="Мягкая">Мягкая</option>
+                    <option value="Твёрдая">Твёрдая</option>
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label>Рейтинг книги (от 0 до 5)</label>
+                <InputNumber @bind-Value="editBook.Rating"
+                             min="0"
+                             max="5"
+                             step="0.1" />
+            </div>
+
+            <div class="form-group">
+                <label>Цвет карточки</label>
+
+                <div class="color-options">
+                    @foreach (var color in ColorOptions)
+                    {
+                        <button type="button"
+                                class="color-option @(editBook.Color == color.Value ? "selected" : "")"
+                                style="background-color: @color.Value"
+                                title="@color.Name"
+                                @onclick="() => editBook.Color = color.Value">
+                        </button>
+                    }
+                </div>
+
+                <span class="selected-color">
+                    Выбранный цвет: @editBook.Color
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label>Описание книги</label>
+                <InputTextArea @bind-Value="editBook.Description"
+                               rows="4"
+                               placeholder="Краткое описание книги..." />
+            </div>
+
+            <div class="form-group">
+                <label>Обложка книги</label>
+
+                <InputFile OnChange="HandleImageUpload"
+                           accept=".jpg,.jpeg,.png,.webp" />
+
+                <small>Форматы JPG, PNG, WEBP. Максимальный размер — 2 МБ.</small>
+
+                @if (!string.IsNullOrWhiteSpace(editBook.Image))
+                {
+                    <div class="book-image-preview">
+                        <p>Предварительный просмотр:</p>
+
+                        <img src="@editBook.Image"
+                             alt="Обложка книги"
+                             style="width: 140px; height: 200px; object-fit: cover; border-radius: 10px;" />
+                    </div>
+                }
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="save-button">
+                    @(isEditing ? "Сохранить изменения" : "Добавить книгу")
+                </button>
+
+                @if (isEditing)
+                {
+                    <button type="button"
+                            class="cancel-button"
+                            @onclick="CancelEdit">
+                        Отмена
+                    </button>
+                }
+            </div>
+
+        </EditForm>
+    </div>
+
+    <div class="admin-books-list">
+
+        <h2>Книги в каталоге (@books.Count)</h2>
+
+        @if (loading)
+        {
+            <p>Загрузка книг...</p>
+        }
+        else if (books.Count == 0)
+        {
+            <p>В каталоге пока нет книг.</p>
+        }
+        else
+        {
+            @foreach (var book in books)
+            {
+                <div class="admin-book-card" @key="book.Id">
+
+                    <div class="admin-book-image">
+                        @if (!string.IsNullOrWhiteSpace(book.Image))
+                        {
+                            <img src="@book.Image" alt="@book.Title" />
+                        }
+                        else
+                        {
+                            <div class="no-image">📚</div>
+                        }
+                    </div>
+
+                    <div class="admin-book-info">
+                        <h3>@book.Title</h3>
+
+                        <p>Автор: @book.Author</p>
+                        <p>Жанр: @book.Genre</p>
+                        <p class="book-price">@book.Price.ToString("N0") ₽</p>
+                    </div>
+                    <p>📄 Страниц: @book.PageCount</p>
+                    <p>📅 Год издания: @book.PublicationYear</p>
+                    <p>📖 Обложка: @book.CoverType</p>
+                    <p>⭐ Рейтинг: @book.Rating.ToString("0.0") / 5</p>
+
+                    <div class="admin-book-actions">
+
+                        <button type="button"
+                                class="edit-button"
+                                @onclick="() => EditBook(book)">
+                            Редактировать
+                        </button>
+
+                        <button type="button"
+                                class="delete-button"
+                                @onclick="() => AskDelete(book.Id)">
+                            Удалить
+                        </button>
+
+                    </div>
+
+                    @if (bookToDeleteId == book.Id)
+                    {
+                        <div class="delete-confirmation">
+                            <p>Точно удалить эту книгу?</p>
+
+                            <button type="button"
+                                    class="delete-button"
+                                    @onclick="() => DeleteBookAsync(book.Id)">
+                                Да, удалить
+                            </button>
+
+                            <button type="button"
+                                    class="cancel-button"
+                                    @onclick="CancelDelete">
+                                Отмена
+                            </button>
+                        </div>
+                    }
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>
+
+@code {
+    private List<Book> books = new();
+
+    private Book editBook = new();
+
+    private bool isEditing = false;
+    private bool loading = true;
+
+    private int? bookToDeleteId;
+
+    private string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooksAsync();
+    }
+    private List<string> GenreOptions = new()
+    {
+        "Роман",
+        "Фантастика",
+        "Фэнтези",
+        "Детектив",
+        "Триллер",
+        "Ужасы",
+        "Классика",
+        "Приключения",
+        "Драма",
+        "Поэзия",
+        "Биография",
+        "Научная литература",
+        "Психология",
+        "История"
+    };
+    private List<(string Name, string Value)> ColorOptions = new()
+    {
+        ("Бежевый", "#E8DCCB"),
+        ("Розовый", "#F3D5D8"),
+        ("Голубой", "#D5E5F0"),
+        ("Зелёный", "#DCE8D5"),
+        ("Персиковый", "#F4D8C2"),
+        ("Сиреневый", "#E4D9F0"),
+        ("Жёлтый", "#F3E8B5"),
+        ("Серый", "#E2E2E2"),
+        ("Коричневый", "#D8C1A5"),
+        ("Мятный", "#CDE8DF")
+    };
+
+    private async Task LoadBooksAsync()
+    {
+        loading = true;
+
+        books = await BookService.GetBooksAsync();
+
+        loading = false;
+    }
+
+    private async Task SaveBookAsync()
+    {
+        if (string.IsNullOrWhiteSpace(editBook.Title) ||
+            string.IsNullOrWhiteSpace(editBook.Author))
+        {
+            message = "Укажи название книги и автора.";
+            return;
+        }
+
+        if (editBook.Price < 0)
+        {
+            message = "Цена не может быть отрицательной.";
+            return;
+        }
+
+        if (isEditing)
+        {
+            await BookService.UpdateBookAsync(editBook);
+            message = "Книга успешно обновлена!";
+        }
+        else
+        {
+            await BookService.AddBookAsync(editBook);
+            message = "Книга успешно добавлена!";
+        }
+
+        editBook = new Book();
+        isEditing = false;
+
+        await LoadBooksAsync();
+    }
+
+    private void EditBook(Book book)
+    {
+        editBook = new Book
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+            Genre = book.Genre,
+            Price = book.Price,
+            Color = book.Color,
+            Emoji = book.Emoji,
+            Description = book.Description,
+            Image = book.Image,
+            Cover = book.Cover,
+
+            PageCount = book.PageCount,
+            PublicationYear = book.PublicationYear,
+            CoverType = book.CoverType,
+            Rating = book.Rating
+        };
+
+        isEditing = true;
+        message = "";
+    }
+
+    private void CancelEdit()
+    {
+        editBook = new Book();
+        isEditing = false;
+        message = "";
+    }
+
+    private void AskDelete(int id)
+    {
+        bookToDeleteId = id;
+    }
+
+    private void CancelDelete()
+    {
+        bookToDeleteId = null;
+    }
+
+    private async Task DeleteBookAsync(int id)
+    {
+        await BookService.DeleteBookAsync(id);
+
+        bookToDeleteId = null;
+        message = "Книга удалена.";
+
+        if (isEditing && editBook.Id == id)
+        {
+            CancelEdit();
+        }
+
+        await LoadBooksAsync();
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+        if (!allowedExtensions.Contains(extension))
+        {
+            message = "Можно загружать только JPG, PNG и WEBP.";
+            return;
+        }
+
+        if (file.Size > 2 * 1024 * 1024)
+        {
+            message = "Размер изображения не должен превышать 2 МБ.";
+            return;
+        }
+
+        var webRoot = Environment.WebRootPath
+                      ?? Path.Combine(Environment.ContentRootPath, "wwwroot");
+
+        var folder = Path.Combine(webRoot, "images", "books");
+
+        Directory.CreateDirectory(folder);
+
+        var fileName = $"book-{Guid.NewGuid():N}{extension}";
+
+        var filePath = Path.Combine(folder, fileName);
+
+        await using var stream = file.OpenReadStream(2 * 1024 * 1024);
+        await using var output = File.Create(filePath);
+
+        await stream.CopyToAsync(output);
+
+        editBook.Image = $"/images/books/{fileName}";
+
+        message = "Обложка успешно загружена!";
+    }
+}
+

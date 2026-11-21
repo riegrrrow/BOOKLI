@@ -1,0 +1,438 @@
+﻿
+@page "/"
+
+@using books.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Linq
+
+@inject books.Services.FavoriteService FavoriteService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+@inject books.Services.CartService Cart
+@inject books.Services.BookService BookService
+@inject ReviewService ReviewService
+@using books.Services
+
+@implements IDisposable
+
+<PageTitle>BOOKLI</PageTitle>
+
+<header class="navbar">
+    <div class="logo">BOOKLI<span>.</span></div>
+
+    <nav class="main-nav">
+        <a href="/">Главная</a>
+        <a href="#catalog">Каталог</a>
+        <a href="#about">О нас</a>
+        <a href="/site-reviews">Отзывы</a>
+
+        <AuthorizeView>
+            <Authorized>
+                <a href="/account">Личный кабинет</a>
+
+                <a href="/settings" class="settings-nav-link">
+                    ⚙ Настройки
+                </a>
+                
+                <AuthorizeView Roles="Admin">
+                    <Authorized Context="adminContext">
+                        <a href="/admin" class="admin-nav-link">
+                            ⚙ Админ-панель
+                        </a>
+                    </Authorized>
+                </AuthorizeView>
+            </Authorized>
+
+            <NotAuthorized>
+                <a href="/login">Войти</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+
+    <div class="header-actions">
+        <a href="/cart" class="cart-link">
+             Корзина: <b>@Cart.TotalCount</b>
+        </a>
+
+        @if (isAuthenticated)
+        {
+            <span class="user-greeting">
+                Привет, @currentUserName!
+            </span>
+
+            <a href="/account" class="login-button">
+                Мой профиль
+            </a>
+        }
+        else
+        {
+            <a href="/login" class="login-button">
+                Войти
+            </a>
+
+            <a href="/register" class="register-button">
+                Регистрация
+            </a>
+        }
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <span class="subtitle">ВАШ МИР КНИГ</span>
+
+        <h1>
+            Откройте для себя<br />
+            новые истории.
+        </h1>
+
+        <p>
+            Лучшие книги для тех, кто любит читать и открывать новое.
+        </p>
+
+        <a href="#catalog" class="hero-button">
+            Смотреть каталог →
+        </a>
+    </div>
+
+    <div class="hero-icon">📚</div>
+</section>
+
+<section class="catalog" id="catalog">
+    <h2>Наш каталог</h2>
+
+    <p class="description">
+        Выберите книгу для своего следующего приключения.
+    </p>
+
+    <div class="filters">
+        <input
+            type="text"
+            placeholder="⌕ Найти книгу или автора..."
+            @bind="searchText"
+            @bind:event="oninput" />
+
+        <select @bind="selectedGenre">
+            <option value="Все">Все жанры</option>
+
+            @foreach (var genre in Genres)
+            {
+                <option value="@genre">@genre</option>
+            }
+        </select>
+    </div>
+
+    @if (books.Count == 0)
+    {
+        <p>Загрузка книг...</p>
+    }
+    else
+    {
+        <div class="books-grid">
+            @foreach (var book in FilteredBooks)
+            {
+                <div class="book-card">
+                    <div class="book-cover">
+                        <img src="@book.Image" alt="@book.Title" />
+                    </div>
+
+                    <div class="book-info">
+                        <h3>@book.Title</h3>
+
+                        <button
+                            type="button"
+                            class="favorite-button"
+                            @onclick="() => ToggleFavoriteAsync(book)">
+                            @(favoriteBookIds.Contains(book.Id.ToString())
+                                ? "❤️"
+                                : "♡")
+                        </button>
+
+                        <p>@book.Author</p>
+
+                        <span class="genre">@book.Genre</span>
+                        <div class="book-details">
+                            <span>▤ @book.PageCount стр.</span>
+                            <span>◷ @book.PublicationYear г.</span>
+                            <span>▣ @book.CoverType обложка</span>
+                        </div>
+
+                        <div class="book-rating">
+                            ⭐ @book.Rating.ToString("0.0") / 5
+                        </div>
+
+                        <a class="details-button"
+                           href="@($"/book/{book.Id}")">
+                            Подробнее →
+                        </a>
+
+                        <div class="book-bottom">
+                            <b>@book.Price.ToString("0.00") ₽</b>
+
+                            <button
+                                type="button"
+                                @onclick="() => AddBook(book)">
+                                @(GetBookCount(book.Title) > 0
+                                    ? $"Добавлено ({GetBookCount(book.Title)})"
+                                    : "В корзину")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!FilteredBooks.Any() && books.Count > 0)
+    {
+        <p class="empty">Книги не найдены</p>
+    }
+</section>
+
+<section class="about" id="about">
+
+    <div class="about-heading">
+        <span class="subtitle">О НАШЕМ МАГАЗИНЕ</span>
+        <h2>BOOKLI — больше, чем просто книги</h2>
+        <p>
+            Мы верим, что каждая книга открывает новую историю,
+            дарит эмоции и помогает увидеть мир по-другому.
+        </p>
+    </div>
+    
+    <div class="about-sections">
+    <div class="about-block">
+        <h2><span class="about-icon">▤</span> История BOOKLI</h2>
+        <p>
+            BOOKLI — это онлайн-книжный магазин, созданный
+            для тех, кто любит читать, узнавать новое и
+            открывать для себя интересные произведения.
+        </p>
+        <p>
+            Идея магазина появилась из желания сделать
+            покупку книг простой и удобной. Мы стремимся
+            объединить в одном месте произведения разных
+            авторов и жанров, чтобы каждый читатель мог
+            найти что-то для себя.
+        </p>
+    </div>
+
+    <div class="about-block">
+        <h2><span class="about-icon">◎</span> Наша миссия и цели</h2>
+        <p>
+            Наша миссия — вдохновлять людей на чтение
+            и помогать находить книги, которые оставляют
+            впечатления.
+        </p>
+
+        <ul>
+            <li>Делать выбор и покупку книг удобными.</li>
+            <li>Знакомить читателей с разными авторами и жанрами.</li>
+            <li>Создавать комфортное пространство для любителей чтения.</li>
+            <li>Постоянно развивать возможности книжного магазина.</li>
+        </ul>
+    </div>
+
+    <div class="about-block">
+        <h2><span class="about-icon">✧</span> Почему выбирают BOOKLI</h2>
+
+        <div class="advantages-grid">
+            <div class="advantage-card">
+                <span class="advantage-icon">▤</span>
+                <h3>Разнообразный каталог</h3>
+                <p>Книги разных жанров и авторов в одном месте.</p>
+            </div>
+
+            <div class="advantage-card">
+                <span class="advantage-icon">⌕</span>
+                <h3>Удобный поиск</h3>
+                <p>Находите произведения по названию и автору.</p>
+            </div>
+
+            <div class="advantage-card">
+                <span class="advantage-icon">♡</span>
+                <h3>Избранное</h3>
+                <p>Сохраняйте книги, которые хотите прочитать.</p>
+            </div>
+
+            <div class="advantage-card">
+                <span class="advantage-icon">♙</span>
+                <h3>Личный кабинет</h3>
+                <p>Управляйте профилем и следите за своими заказами.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-block" id="delivery">
+        <h2><span class="about-icon">▣</span> Доставка и оплата</h2>
+
+        <p>
+            В BOOKLI можно оформить заказ через корзину,
+            указать адрес доставки и выбрать удобный способ оплаты.
+        </p>
+
+        <h3>Доставка</h3>
+        <p>
+            При оформлении заказа необходимо указать адрес,
+            по которому должна быть доставлена покупка.
+            Информация о заказе сохраняется в личном кабинете.
+        </p>
+
+        <h3>Оплата</h3>
+        <ul>
+            <li><strong>При получении</strong> — оплата при получении заказа.</li>
+            <li><strong>Онлайн</strong> — оплата на сайте магазина.</li>
+        </ul>
+    </div>
+
+    <div class="about-block" id="contacts">
+        <h2><span class="about-icon">✉</span> Контакты</h2>
+
+        <p>
+            Есть вопросы или предложения? Мы будем рады
+            обратной связи!
+        </p>
+
+        <div class="contact-info">
+            <p><strong>Email:</strong> bookli@gmail.com</p>
+            <p><strong>Телефон:</strong> +7 (495) 123‑45‑67 </p>
+        </div>
+    </div>
+    </div>
+</section>
+
+<footer>
+    © 2026 BOOKLI. Ваш книжный магазин.
+</footer>
+
+@if (!string.IsNullOrEmpty(notification))
+{
+    <div class="notification">@notification</div>
+}
+
+@code {
+    private bool isAuthenticated = false;
+    private string currentUserName = "читатель";
+    private string? currentUserId;
+
+    private HashSet<string> favoriteBookIds = new();
+
+    private string searchText = "";
+    private string selectedGenre = "Все";
+    private string notification = "";
+
+    private List<Book> books = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await BookService.GetBooksAsync();
+
+        // Загружаем средние оценки читателей
+        foreach (var book in books)
+        {
+            book.Rating = await ReviewService.GetAverageRatingAsync(book.Id);
+        }
+
+        Cart.OnChange += UpdateCatalog;
+
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        isAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
+
+        var user = await UserManager.GetUserAsync(state.User);
+
+        if (user != null)
+        {
+            currentUserId = user.Id;
+            currentUserName = user.FullName ?? user.Email ?? "читатель";
+
+            var favorites = await FavoriteService.GetFavoritesAsync(user.Id);
+
+            favoriteBookIds = favorites
+                .Select(book => book.Id.ToString())
+                .ToHashSet();
+        }
+    }
+
+    private void UpdateCatalog()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Cart.OnChange -= UpdateCatalog;
+    }
+
+    private int GetBookCount(string title)
+    {
+        return Cart.Items
+            .Where(item => item.Title == title)
+            .Sum(item => item.Quantity);
+    }
+
+    private async Task ToggleFavoriteAsync(Book book)
+    {
+        if (string.IsNullOrEmpty(currentUserId))
+        {
+            notification = "Чтобы добавлять книги в избранное, войди в аккаунт.";
+            return;
+        }
+
+        string bookId = book.Id.ToString();
+
+        await FavoriteService.ToggleFavoriteAsync(
+            currentUserId,
+            bookId);
+
+        if (favoriteBookIds.Contains(bookId))
+        {
+            favoriteBookIds.Remove(bookId);
+            notification = $"Книга «{book.Title}» удалена из избранного.";
+        }
+        else
+        {
+            favoriteBookIds.Add(bookId);
+            notification = $"Книга «{book.Title}» добавлена в избранное!";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void AddBook(Book book)
+    {
+        Cart.Add(
+            book.Title,
+            book.Author,
+            book.Price,
+            book.Image
+        );
+
+        notification = $"Книга «{book.Title}» добавлена в корзину!";
+    }
+
+    private IEnumerable<Book> FilteredBooks =>
+        books.Where(b =>
+            (selectedGenre == "Все" ||
+             string.Equals(
+                 b.Genre?.Trim(),
+                 selectedGenre.Trim(),
+                 StringComparison.OrdinalIgnoreCase)) &&
+
+            (string.IsNullOrWhiteSpace(searchText) ||
+             (b.Title?.Contains(
+                 searchText,
+                 StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (b.Author?.Contains(
+                 searchText,
+                 StringComparison.OrdinalIgnoreCase) ?? false)));
+
+    private IEnumerable<string> Genres =>
+        books
+            .Where(b => !string.IsNullOrWhiteSpace(b.Genre))
+            .Select(b => b.Genre.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(g => g);
+}

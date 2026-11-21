@@ -1,0 +1,422 @@
+@page "/account"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using books.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject IWebHostEnvironment Environment
+@inject books.Services.FavoriteService FavoriteService
+@inject NavigationManager Navigation
+@inject books.Services.OrderService OrderService
+
+<PageTitle>Личный кабинет — BOOKLI</PageTitle>
+
+
+<div class="account-background">
+<div class="account-page">
+    <a href="/" class="back-to-catalog">
+        ← Вернуться в каталог
+    </a>
+
+    <div class="account-heading">
+        <h1 class="account-title">Личный кабинет</h1>
+        <p class="account-subtitle">
+            Ваш личный книжный уголок в BOOKLI
+        </p>
+    </div>
+
+    @if (isAdmin)
+    {
+        <div class="admin-badge">
+            ⭐ Администратор BOOKLI
+        </div>
+    }
+
+    @if (loading)
+    {
+        <p>Загрузка...</p>
+    }
+    else if (user != null)
+    {
+        <!-- КАРТОЧКА ПРОФИЛЯ -->
+        <div class="profile-card">
+
+            <div class="profile-header">
+                @if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    <img class="profile-avatar"
+                         src="@avatarUrl"
+                         alt="Аватар пользователя" />
+                }
+                else
+                {
+                    <div class="profile-avatar">
+                        @GetInitials()
+                    </div>
+                }
+
+                <div class="profile-user-info">
+                    <span class="profile-greeting">Добро пожаловать!</span>
+
+                    <h2>
+                        @(string.IsNullOrWhiteSpace(user.FullName)
+                            ? "Читатель BOOKLI"
+                            : user.FullName)
+                    </h2>
+
+                    <p>@user.Email</p>
+
+                    <a href="/settings" class="profile-settings-button">
+                        ⚙ Настройки профиля
+                    </a>
+                </div>
+            </div>
+
+            <div class="avatar-upload">
+                <label>Фотография профиля</label>
+
+                <InputFile OnChange="UploadAvatarAsync"
+                           accept="image/png,image/jpeg,image/webp" />
+
+                <small>JPG, PNG или WEBP. Максимум 2 МБ.</small>
+
+                @if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    <button type="button"
+                            class="delete-avatar-button"
+                            @onclick="DeleteAvatarAsync">
+                        Удалить фотографию
+                    </button>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <p class="account-message">@message</p>
+            }
+
+        </div>
+
+        <!-- КАРТОЧКИ РАЗДЕЛОВ -->
+        <div class="account-sections">
+
+            <!-- ИЗБРАННОЕ -->
+            <div class="account-section-card">
+                <div class="section-card-icon">♡</div>
+                <h3>Избранные книги</h3>
+                <p>Книги, которые Вы сохранили.</p>
+
+                @if (favoriteBooks.Count == 0)
+                {
+                    <p class="empty-section">
+                        Пока здесь нет избранных книг.
+                    </p>
+                }
+                else
+                {
+                    <div class="section-preview">
+                        @foreach (var book in favoriteBooks.Take(3))
+                        {
+                            <a href="@($"/book/{book.Id}?returnUrl=/account")">
+                                @book.Title
+                            </a>
+                        }
+                    </div>
+                }
+
+                <a href="/favorites" class="section-link">
+                    Открыть избранное →
+                </a>
+            </div>
+
+            <!-- ЗАКАЗЫ -->
+            <div class="account-section-card">
+                <div class="section-card-icon">▤</div>
+                <h3>История заказов</h3>
+                <p>Все Ваши покупки и информация о них.</p>
+
+                @if (orders.Count == 0)
+                {
+                    <p class="empty-section">
+                        У Вас пока нет заказов.
+                    </p>
+                }
+                else
+                {
+                    <div class="section-preview">
+                        @foreach (var order in orders.Take(2))
+                        {
+                            <div class="order-preview">
+                                <strong>Заказ №@order.Id</strong>
+                                <span>@order.Status</span>
+                                <span>
+                                    @order.Total.ToString("0.00") ₽
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <a href="/orders" class="section-link">
+                    Открыть все заказы →
+                </a>
+            </div>
+
+            <!-- АДРЕС ДОСТАВКИ -->
+            <div class="account-section-card">
+                <div class="section-card-icon">▣</div>
+                <h3>Адрес доставки</h3>
+                <p>Адрес, который используется при оформлении заказов.</p>
+
+                <div class="address-preview">
+                    @(string.IsNullOrWhiteSpace(user.DeliveryAddress)
+                        ? "Адрес пока не указан"
+                        : user.DeliveryAddress)
+                </div>
+
+                <a href="/settings" class="section-link">
+                    Изменить адрес →
+                </a>
+            </div>
+
+            <!-- ОТЗЫВЫ -->
+            <div class="account-section-card">
+                <div class="section-card-icon">✧</div>
+                <h3>Отзывы</h3>
+                <p>Поделитесь впечатлениями о книгах и магазине BOOKLI.</p>
+
+                <div class="review-preview">
+                    Ваше мнение помогает нам становиться лучше!
+                </div>
+
+                <a href="/site-reviews" class="section-link">
+                    Перейти к отзывам →
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ВЫХОД -->
+        <div class="account-logout">
+            <form method="post" action="/auth/logout">
+                <AntiforgeryToken />
+                <button type="submit" class="logout-button">
+                    Выйти из аккаунта
+                </button>
+            </form>
+        </div>
+    }
+</div>
+</div>
+
+@code {
+    private ApplicationUser? user;
+    private bool isAdmin = false;
+    private string message = "";
+    private string? avatarUrl;
+    private bool loading = true;
+    private List<Book> favoriteBooks = new();
+    private List<books.Models.Order> orders = new();
+    private string deliveryAddress = "";
+   
+    private const long MaxAvatarSize = 2 * 1024 * 1024;
+
+    
+protected override async Task OnInitializedAsync()
+{
+    var state = await AuthStateProvider.GetAuthenticationStateAsync();
+
+    user = await UserManager.GetUserAsync(state.User);
+
+    if (user != null)
+    {
+        // Проверяем роль администратора
+        isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+
+        // Загружаем избранные книги
+        favoriteBooks = await FavoriteService.GetFavoritesAsync(user.Id);
+
+        // Загружаем историю заказов
+        orders = await OrderService.GetOrdersAsync(user.Id);
+
+        // Загружаем аватар
+        FindAvatar();
+    }
+
+    loading = false;
+}
+
+
+    private void FindAvatar()
+    {
+        if (user == null)
+            return;
+
+        string folder = Path.Combine(
+            Environment.WebRootPath,
+            "images",
+            "profiles");
+
+        string[] extensions = { ".jpg", ".png", ".webp" };
+
+        foreach (var extension in extensions)
+        {
+            string path = Path.Combine(
+                folder, user.Id + extension);
+
+            if (File.Exists(path))
+            {
+                avatarUrl = $"/images/profiles/{user.Id}{extension}?v={File.GetLastWriteTimeUtc(path).Ticks}";
+                return;
+            }
+        }
+
+        avatarUrl = null;
+    }
+
+    private async Task UploadAvatarAsync(InputFileChangeEventArgs e)
+    {
+        if (user == null)
+            return;
+
+        var file = e.File;
+
+        if (file.Size == 0 || file.Size > MaxAvatarSize)
+        {
+            message = "Фотография должна быть не больше 2 МБ.";
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(MaxAvatarSize);
+            using var memory = new MemoryStream();
+
+            await stream.CopyToAsync(memory);
+
+            byte[] bytes = memory.ToArray();
+
+            string? extension = GetImageExtension(bytes);
+
+            if (extension == null)
+            {
+                message = "Выбери корректную фотографию JPG, PNG или WEBP.";
+                return;
+            }
+
+            string folder = Path.Combine(
+                Environment.WebRootPath,
+                "images",
+                "profiles");
+
+            Directory.CreateDirectory(folder);
+
+            string[] oldExtensions = { ".jpg", ".png", ".webp" };
+
+            foreach (var oldExtension in oldExtensions)
+            {
+                string oldPath = Path.Combine(
+                    folder, user.Id + oldExtension);
+
+                if (File.Exists(oldPath))
+                    File.Delete(oldPath);
+            }
+
+            string newPath = Path.Combine(
+                folder, user.Id + extension);
+
+            await File.WriteAllBytesAsync(newPath, bytes);
+
+            FindAvatar();
+
+            message = "Фотография профиля успешно обновлена!";
+        }
+        catch (IOException)
+        {
+            message = "Не удалось сохранить фотографию. Попробуйте ещё раз.";
+        }
+        catch (InvalidOperationException)
+        {
+            message = "Не удалось прочитать файл. Проверьте его размер.";
+        }
+    }
+
+    private string? GetImageExtension(byte[] bytes)
+    {
+        // JPEG
+        if (bytes.Length >= 3 &&
+            bytes[0] == 0xFF &&
+            bytes[1] == 0xD8 &&
+            bytes[2] == 0xFF)
+            return ".jpg";
+
+        // PNG
+        if (bytes.Length >= 8 &&
+            bytes[0] == 0x89 &&
+            bytes[1] == 0x50 &&
+            bytes[2] == 0x4E &&
+            bytes[3] == 0x47 &&
+            bytes[4] == 0x0D &&
+            bytes[5] == 0x0A &&
+            bytes[6] == 0x1A &&
+            bytes[7] == 0x0A)
+            return ".png";
+
+        // WEBP
+        if (bytes.Length >= 12 &&
+            System.Text.Encoding.ASCII.GetString(bytes, 0, 4) == "RIFF" &&
+            System.Text.Encoding.ASCII.GetString(bytes, 8, 4) == "WEBP")
+            return ".webp";
+
+        return null;
+    }
+    
+    private async Task DeleteAvatarAsync()
+    {
+        if (user == null)
+            return;
+
+        string folder = Path.Combine(
+            Environment.WebRootPath,
+            "images",
+            "profiles");
+
+        string[] extensions = { ".jpg", ".png", ".webp" };
+
+        try
+        {
+            foreach (var extension in extensions)
+            {
+                string path = Path.Combine(
+                    folder,
+                    user.Id + extension);
+
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+
+            avatarUrl = null;
+            message = "Фотография профиля удалена!";
+        }
+        catch (IOException)
+        {
+            message = "Не удалось удалить фотографию. Попробуйте ещё раз.";
+        }
+    }
+
+
+    private string GetInitials()
+    {
+        if (string.IsNullOrWhiteSpace(user?.FullName))
+            return "B";
+
+        return string.Join("",
+            user.FullName
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Take(2)
+                .Select(x => char.ToUpper(x[0])));
+    }
+}
